@@ -29,9 +29,11 @@ import {
   ChatInput,
   Timeline,
   InputOtp,
+  WorldMap,
+  TerminalMenu,
   type TreeNode
 } from './components'
-import { Zap, Settings, Copy, Check, Download, Upload, Trash2, Edit, ChevronRight, Folder, File, FolderOpen, FileText, Code, Image, Music, Video, FileIcon } from 'lucide-react'
+import { Zap, Settings, Copy, Check, Download, Upload, Trash2, Edit, ChevronRight, Folder, File, FolderOpen, FileText, Code, Image, Music, Video, FileIcon, RefreshCw, Lock } from 'lucide-react'
 
 function App() {
   const [inputValue, setInputValue] = useState('')
@@ -50,6 +52,7 @@ function App() {
   const [submittedFiles, setSubmittedFiles] = useState<File[]>([])
   const [chatMessages, setChatMessages] = useState<Array<{ id: string; message: string; attachments: any[]; timestamp: Date }>>([])
   const [otpValue, setOtpValue] = useState('')
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(null)
   const [transferLeftItems, setTransferLeftItems] = useState([
     { id: '1', label: 'React' },
     { id: '2', label: 'TypeScript' },
@@ -951,6 +954,165 @@ function App() {
                   onChange={() => {}}
                   length={4}
                   disabled={true}
+                />
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* World Map Component */}
+        <Card title="World Map Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              Responsive world map with clickable locations, inspired by Grommet's WorldMap but customized for the monochromatic terminal theme.
+            </Paragraph>
+            
+            <div className="space-y-4">
+              <div className="h-96">
+                <WorldMap
+                  locations={[
+                    {
+                      id: 'nyc',
+                      name: 'New York City',
+                      lat: 40.7128,
+                      lng: -74.0060,
+                      color: 'rgb(251, 146, 60)',
+                      size: 12,
+                      onClick: () => setSelectedLocation('New York City'),
+                    },
+                    {
+                      id: 'london',
+                      name: 'London',
+                      lat: 51.5074,
+                      lng: -0.1278,
+                      color: 'rgb(34, 197, 94)',
+                      size: 10,
+                      onClick: () => setSelectedLocation('London'),
+                    },
+                    {
+                      id: 'tokyo',
+                      name: 'Tokyo',
+                      lat: 35.6762,
+                      lng: 139.6503,
+                      color: 'rgb(239, 68, 68)',
+                      size: 11,
+                      onClick: () => setSelectedLocation('Tokyo'),
+                    },
+                    {
+                      id: 'sydney',
+                      name: 'Sydney',
+                      lat: -33.8688,
+                      lng: 151.2093,
+                      color: 'rgb(168, 85, 247)',
+                      size: 9,
+                      onClick: () => setSelectedLocation('Sydney'),
+                    },
+                    {
+                      id: 'cairo',
+                      name: 'Cairo',
+                      lat: 30.0444,
+                      lng: 31.2357,
+                      color: 'rgb(251, 191, 36)',
+                      size: 8,
+                      onClick: () => setSelectedLocation('Cairo'),
+                    },
+                  ]}
+                  onLocationClick={(location) => setSelectedLocation(location.name)}
+                  responsive={true}
+                  className="w-full h-full"
+                />
+              </div>
+              
+              {selectedLocation && (
+                <div className="p-3 border border-orange-300/30 rounded-md bg-black">
+                  <Paragraph size="sm">
+                    Selected: <span className="font-medium text-orange-300">{selectedLocation}</span>
+                  </Paragraph>
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+
+        {/* Terminal Menu Component */}
+        <Card title="Terminal Menu Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              Terminal-style navigation menu with keyboard navigation, inspired by TUI and Fallout computer interfaces.
+            </Paragraph>
+            
+            <div className="space-y-8">
+              {/* Basic Menu */}
+              <div>
+                <Header size="sm" className="mb-4">Basic Navigation Menu</Header>
+                <TerminalMenu
+                  items={[
+                    {
+                      id: 'home',
+                      label: 'Home',
+                      description: 'Return to the main dashboard',
+                      action: () => alert('Navigating to Home'),
+                    },
+                    {
+                      id: 'settings',
+                      label: 'Settings',
+                      description: 'Configure your preferences and options',
+                      action: () => alert('Opening Settings'),
+                    },
+                    {
+                      id: 'profile',
+                      label: 'User Profile',
+                      description: 'View and edit your profile information',
+                      action: () => alert('Opening Profile'),
+                    },
+                    {
+                      id: 'help',
+                      label: 'Help & Support',
+                      description: 'Get help and contact support',
+                      action: () => alert('Opening Help'),
+                    },
+                  ]}
+                  onEsc={() => alert('Escape pressed - going back')}
+                />
+              </div>
+              
+              <Divider />
+              
+              {/* Advanced Menu */}
+              <div>
+                <Header size="sm" className="mb-4">Advanced Menu with Icons</Header>
+                <TerminalMenu
+                  items={[
+                    {
+                      id: 'download',
+                      label: 'Download Files',
+                      description: 'Download your saved files and documents',
+                      action: () => alert('Starting download...'),
+                      icon: <Download className="w-4 h-4" />,
+                    },
+                    {
+                      id: 'upload',
+                      label: 'Upload Files',
+                      description: 'Upload new files to your account',
+                      action: () => alert('Opening file upload...'),
+                      icon: <Upload className="w-4 h-4" />,
+                    },
+                    {
+                      id: 'sync',
+                      label: 'Sync Data',
+                      description: 'Synchronize your data across devices',
+                      action: () => alert('Starting sync...'),
+                      icon: <RefreshCw className="w-4 h-4" />,
+                    },
+                    {
+                      id: 'disabled',
+                      label: 'Disabled Option',
+                      description: 'This option is currently unavailable',
+                      disabled: true,
+                      icon: <Lock className="w-4 h-4" />,
+                    },
+                  ]}
+                  maxHeight={300}
                 />
               </div>
             </div>
