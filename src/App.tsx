@@ -21,9 +21,17 @@ import {
   Breadcrumbs,
   Select,
   TransferList,
+  DatePicker,
+  DateRangePicker,
+  AudioPlayer,
+  InlineAudioPlayer,
+  FilePicker,
+  ChatInput,
+  Timeline,
+  InputOtp,
   type TreeNode
 } from './components'
-import { Zap, Settings, Copy, Check, Download, Upload, Trash2, Edit, ChevronRight, Folder, File, FolderOpen, FileText, Code, Image, Music, Video } from 'lucide-react'
+import { Zap, Settings, Copy, Check, Download, Upload, Trash2, Edit, ChevronRight, Folder, File, FolderOpen, FileText, Code, Image, Music, Video, FileIcon } from 'lucide-react'
 
 function App() {
   const [inputValue, setInputValue] = useState('')
@@ -37,6 +45,11 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectValue, setSelectValue] = useState('')
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>([])
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null })
+  const [submittedFiles, setSubmittedFiles] = useState<File[]>([])
+  const [chatMessages, setChatMessages] = useState<Array<{ id: string; message: string; attachments: any[]; timestamp: Date }>>([])
+  const [otpValue, setOtpValue] = useState('')
   const [transferLeftItems, setTransferLeftItems] = useState([
     { id: '1', label: 'React' },
     { id: '2', label: 'TypeScript' },
@@ -178,6 +191,17 @@ function App() {
       setTransferRightItems(prev => prev.filter(item => !itemIds.includes(item.id)))
       setTransferLeftItems(prev => [...prev, ...itemsToMove])
     }
+  }
+
+  // Chat handlers
+  const handleChatSend = (message: string, attachments: any[]) => {
+    const newMessage = {
+      id: Date.now().toString(),
+      message,
+      attachments,
+      timestamp: new Date()
+    };
+    setChatMessages(prev => [...prev, newMessage]);
   }
 
   // Custom icon function for file explorer
@@ -634,6 +658,302 @@ function App() {
               searchable={true}
               selectAll={true}
             />
+          </div>
+        </Card>
+
+        {/* Date Picker Component */}
+        <Card title="Date Picker Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              Accessible date picker with keyboard navigation and monochromatic terminal styling.
+            </Paragraph>
+            
+            <DatePicker
+              label="Select Date"
+              value={selectedDate || undefined}
+              onChange={setSelectedDate}
+              placeholder="Choose a date..."
+              description="Select a date for your appointment"
+            />
+            
+            <DatePicker
+              label="Disabled Date Picker"
+              value={undefined}
+              onChange={() => {}}
+              placeholder="This picker is disabled"
+              disabled={true}
+            />
+          </div>
+        </Card>
+
+        {/* Date Range Picker Component */}
+        <Card title="Date Range Picker Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              Date range picker with dual calendar view and range selection.
+            </Paragraph>
+            
+            <DateRangePicker
+              label="Select Date Range"
+              value={dateRange}
+              onChange={setDateRange}
+              placeholder="Choose start and end dates..."
+              description="Select a date range for your booking"
+            />
+          </div>
+        </Card>
+
+        {/* Audio Player Component */}
+        <Card title="Audio Player Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              Simple audio player with monochromatic terminal styling and full controls.
+            </Paragraph>
+            
+            <AudioPlayer
+              src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"
+              title="Sample Audio Track"
+              className="max-w-md"
+            />
+            
+            <Divider />
+            
+            <Paragraph size="sm">
+              Inline audio player for compact previews.
+            </Paragraph>
+            
+            <InlineAudioPlayer
+              src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav"
+              title="Inline Preview"
+              className="max-w-md"
+            />
+          </div>
+        </Card>
+
+        {/* File Picker Component */}
+        <Card title="File Picker Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              Drag and drop file picker with preview support and accessibility features.
+            </Paragraph>
+            
+            <FilePicker
+              label="Upload Images"
+              onFilesSubmit={setSubmittedFiles}
+              multiple={true}
+              accept="image/*"
+              maxFiles={5}
+              maxSize={5 * 1024 * 1024} // 5MB
+              preview={true}
+              description="Upload up to 5 images, maximum 5MB each"
+            />
+            
+            <Divider />
+            
+            <FilePicker
+              label="Single File Upload"
+              onFilesSubmit={(files) => setSubmittedFiles(files)}
+              multiple={false}
+              accept=".pdf,.doc,.docx"
+              maxSize={10 * 1024 * 1024} // 10MB
+              description="Upload a single document file"
+            />
+          </div>
+        </Card>
+
+        {/* Chat Input Component */}
+        <Card title="Chat Input Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              Discord-like chat input with file attachments, drag & drop, and clipboard support.
+            </Paragraph>
+            
+            <ChatInput
+              onSend={handleChatSend}
+              placeholder="Type your message here..."
+              maxAttachments={3}
+              maxFileSize={5 * 1024 * 1024} // 5MB
+              acceptedFileTypes={['image/*', '.pdf', '.doc', '.docx', '.txt']}
+            />
+            
+            <Divider />
+            
+            <div className="space-y-3">
+              <Paragraph size="sm">Chat History:</Paragraph>
+              {chatMessages.length === 0 ? (
+                <Paragraph size="sm" className="text-orange-300/60">
+                  No messages yet. Send a message above to see it here!
+                </Paragraph>
+              ) : (
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                  {chatMessages.map((msg) => (
+                    <div key={msg.id} className="p-3 border border-orange-300/30 rounded-md bg-black">
+                      <div className="flex items-start justify-between mb-2">
+                        <span className="text-sm font-medium text-orange-300">
+                          {msg.timestamp.toLocaleTimeString()}
+                        </span>
+                      </div>
+                      {msg.message && (
+                        <Paragraph size="sm" className="mb-2">
+                          {msg.message}
+                        </Paragraph>
+                      )}
+                      {msg.attachments.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {msg.attachments.map((att, index) => (
+                            <div key={index} className="flex items-center gap-2 p-2 border border-orange-300/30 rounded-md bg-black">
+                              {att.type === 'image' && att.preview ? (
+                                <img
+                                  src={att.preview}
+                                  alt={att.file.name}
+                                  className="w-8 h-8 object-cover rounded border border-orange-300/30"
+                                />
+                              ) : (
+                                <FileIcon className="w-8 h-8 text-orange-300/80" />
+                              )}
+                              <span className="text-xs text-orange-300/80">
+                                {att.file.name}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+
+        {/* Timeline Component */}
+        <Card title="Timeline Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              Vertical timeline component with status indicators, inspired by Ant Design but customized for the monochromatic terminal theme.
+            </Paragraph>
+            
+            <div className="space-y-8">
+              {/* Basic Timeline */}
+              <div>
+                <Header size="sm" className="mb-4">Basic Timeline</Header>
+                <Timeline
+                  items={[
+                    {
+                      id: '1',
+                      title: 'Project Started',
+                      description: 'Initial project setup and configuration completed',
+                      timestamp: '2024-01-15',
+                      status: 'success'
+                    },
+                    {
+                      id: '2',
+                      title: 'Core Components Built',
+                      description: 'Basic UI components implemented with monochromatic theme',
+                      timestamp: '2024-01-20',
+                      status: 'success'
+                    },
+                    {
+                      id: '3',
+                      title: 'Advanced Features',
+                      description: 'Complex components like DatePicker and FilePicker added',
+                      timestamp: '2024-01-25',
+                      status: 'warning'
+                    },
+                    {
+                      id: '4',
+                      title: 'Testing & Polish',
+                      description: 'Final testing and UI refinements',
+                      timestamp: '2024-01-30',
+                      status: 'pending'
+                    }
+                  ]}
+                />
+              </div>
+              
+              <Divider />
+              
+
+              
+              {/* Custom Timeline */}
+              <div>
+                <Header size="sm" className="mb-4">Custom Timeline with Pending</Header>
+                <Timeline
+                  pending="More features coming soon..."
+                  items={[
+                    {
+                      id: '1',
+                      title: 'Current Release',
+                      description: 'All planned components are now available',
+                      timestamp: 'v1.0.0',
+                      status: 'success'
+                    },
+                    {
+                      id: '2',
+                      title: 'Next Release',
+                      description: 'Additional components and enhancements',
+                      timestamp: 'v1.1.0',
+                      status: 'pending'
+                    }
+                  ]}
+                />
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Input OTP Component */}
+        <Card title="Input OTP Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              One-time password input component with masked mode, inspired by PrimeReact but customized for the monochromatic terminal theme.
+            </Paragraph>
+            
+            <div className="space-y-8">
+              {/* Basic OTP */}
+              <div>
+                <Header size="sm" className="mb-4">Basic 4-Digit OTP</Header>
+                <InputOtp
+                  value={otpValue}
+                  onChange={setOtpValue}
+                  length={4}
+                  autoFocus={true}
+                />
+                <Paragraph size="sm" className="mt-2 text-orange-300/60">
+                  Current value: {otpValue || 'None'}
+                </Paragraph>
+              </div>
+              
+              <Divider />
+              
+              {/* 6-Digit OTP with Mask */}
+              <div>
+                <Header size="sm" className="mb-4">6-Digit OTP with Mask</Header>
+                <InputOtp
+                  value={otpValue}
+                  onChange={setOtpValue}
+                  length={4}
+                  mask={true}
+                  integerOnly={true}
+                />
+                <Paragraph size="sm" className="mt-2 text-orange-300/60">
+                  Current value: {otpValue || 'None'}
+                </Paragraph>
+              </div>
+              
+              <Divider />
+              
+              {/* Disabled OTP */}
+              <div>
+                <Header size="sm" className="mb-4">Disabled OTP</Header>
+                <InputOtp
+                  value="1234"
+                  onChange={() => {}}
+                  length={4}
+                  disabled={true}
+                />
+              </div>
+            </div>
           </div>
         </Card>
 

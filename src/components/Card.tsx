@@ -1,4 +1,5 @@
 import React from 'react';
+import { Header } from './Header';
 
 interface CardProps {
   children: React.ReactNode;
@@ -22,13 +23,9 @@ export const Card: React.FC<CardProps> = ({
     bordered: 'border-2 border-orange-300/50'
   };
 
-  const titleClasses = `
-    font-sans font-bold text-orange-300 mb-3 text-sm
-  `;
-
   return (
     <div className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
-      {title && <h3 className={titleClasses}>{title}</h3>}
+      {title && <Header size="lg" className="mb-3">{title}</Header>}
       {children}
     </div>
   );
