@@ -1,0 +1,487 @@
+import { useState } from 'react'
+import {
+  Button,
+  IconButton,
+  TextInput,
+  Textarea,
+  RangeSlider,
+  Checkbox,
+  Switch,
+  Radio,
+  Paragraph,
+  Header,
+  Card,
+  Badge,
+  Divider,
+  Clipboard,
+  TreeView,
+  LoadingSpinner,
+  type TreeNode
+} from './components'
+import { Zap, Settings, Copy, Check, Download, Upload, Trash2, Edit, ChevronRight, Folder, File, FolderOpen, FileText, Code, Image, Music, Video } from 'lucide-react'
+
+function App() {
+  const [inputValue, setInputValue] = useState('')
+  const [emailValue, setEmailValue] = useState('')
+  const [passwordValue, setPasswordValue] = useState('')
+  const [sliderValue, setSliderValue] = useState(50)
+  const [checkboxValue, setCheckboxValue] = useState(false)
+  const [switchValue, setSwitchValue] = useState(false)
+  const [radioValue, setRadioValue] = useState('option1')
+  const [textareaValue, setTextareaValue] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Sample tree data
+  const treeData: TreeNode[] = [
+    {
+      id: '1',
+      label: 'Documents',
+      children: [
+        {
+          id: '1-1',
+          label: 'Work',
+          children: [
+            { id: '1-1-1', label: 'report.pdf' },
+            { id: '1-1-2', label: 'presentation.pptx' },
+            { id: '1-1-3', label: 'budget.xlsx' }
+          ]
+        },
+        {
+          id: '1-2',
+          label: 'Personal',
+          children: [
+            { id: '1-2-1', label: 'photos', children: [
+              { id: '1-2-1-1', label: 'vacation.jpg' },
+              { id: '1-2-1-2', label: 'family.png' }
+            ]},
+            { id: '1-2-2', label: 'music', children: [
+              { id: '1-2-2-1', label: 'playlist.mp3' },
+              { id: '1-2-2-2', label: 'album.flac' }
+            ]}
+          ]
+        }
+      ]
+    },
+    {
+      id: '2',
+      label: 'Projects',
+      children: [
+        {
+          id: '2-1',
+          label: 'monopollis',
+          children: [
+            { id: '2-1-1', label: 'src', children: [
+              { id: '2-1-1-1', label: 'components', children: [
+                { id: '2-1-1-1-1', label: 'Button.tsx' },
+                { id: '2-1-1-1-2', label: 'TreeView.tsx' },
+                { id: '2-1-1-1-3', label: 'index.ts' }
+              ]},
+              { id: '2-1-1-2', label: 'App.tsx' },
+              { id: '2-1-1-3', label: 'main.tsx' }
+            ]},
+            { id: '2-1-2', label: 'package.json' },
+            { id: '2-1-3', label: 'README.md' }
+          ]
+        },
+        {
+          id: '2-2',
+          label: 'other-project',
+          children: [
+            { id: '2-2-1', label: 'assets', children: [
+              { id: '2-2-1-1', label: 'video.mp4' },
+              { id: '2-2-1-2', label: 'logo.svg' }
+            ]}
+          ]
+        }
+      ]
+    }
+  ]
+
+  // Custom icon function for file explorer
+  const getFileIcon = (node: TreeNode, isOpen: boolean) => {
+    const hasChildren = node.children && node.children.length > 0;
+    
+    if (hasChildren) {
+      return isOpen ? FolderOpen : Folder;
+    }
+    
+    const extension = node.label.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'tsx':
+      case 'ts':
+      case 'js':
+      case 'jsx':
+        return Code;
+      case 'json':
+      case 'md':
+      case 'pdf':
+      case 'pptx':
+      case 'xlsx':
+        return FileText;
+      case 'jpg':
+      case 'png':
+      case 'gif':
+      case 'svg':
+        return Image;
+      case 'mp3':
+      case 'flac':
+      case 'wav':
+        return Music;
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+        return Video;
+      default:
+        return File;
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-orange-300 p-8">
+      {/* Skip link for accessibility */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-orange-300 text-black px-4 py-2 rounded-md font-sans font-medium z-50"
+      >
+        Skip to main content
+      </a>
+      
+      <div id="main-content" className="max-w-4xl mx-auto space-y-8">
+        {/* Header Section */}
+        <Header size="2xl" className="text-center mb-8">
+          Monochromatic Terminal UI
+        </Header>
+
+        {/* Typography Section */}
+        <Card title="Typography" variant="bordered">
+          <div className="space-y-4">
+            <Header size="lg">Header Component</Header>
+            <Header size="base">Medium Header</Header>
+            <Header size="sm">Small Header</Header>
+            
+            <Divider />
+            
+            <Paragraph size="lg">
+              This is a large paragraph demonstrating the monochromatic terminal aesthetic.
+            </Paragraph>
+            <Paragraph>
+              This is a standard paragraph with the default styling. The design system uses
+              only two colors: off-black background and bright orange-yellow text.
+            </Paragraph>
+            <Paragraph size="sm">
+              This is a small paragraph for secondary information.
+            </Paragraph>
+          </div>
+        </Card>
+
+        {/* Button Section */}
+        <Card title="Buttons" variant="bordered">
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-4">
+              <Button onClick={() => alert('Primary button clicked!')}>
+                Primary Button
+              </Button>
+              <Button variant="secondary" onClick={() => alert('Secondary button clicked!')}>
+                Secondary Button
+              </Button>
+              <Button disabled aria-label="This button is currently disabled">
+                Disabled Button
+              </Button>
+              <Button 
+                isLoading={true}
+                onClick={() => {
+                  setIsLoading(true);
+                  setTimeout(() => setIsLoading(false), 2000);
+                }}
+              >
+                Controlled Loading Button
+              </Button>
+              <Button 
+                isLoading={isLoading}
+                onClick={() => {
+                  setIsLoading(true);
+                  setTimeout(() => setIsLoading(false), 2000);
+                }}
+              >
+                Click Me!
+              </Button>
+            </div>
+            
+            <Divider />
+            
+            <div className="flex flex-wrap gap-4">
+              <Button onClick={() => alert('Button with icon clicked!')} icon={<Zap />}>
+                Button with Icon
+              </Button>
+              <Button variant="secondary" onClick={() => alert('Secondary with icon clicked!')} icon={<Settings />}>
+                Secondary with Icon
+              </Button>
+            </div>
+            
+            <Divider />
+            
+            <div className="flex flex-wrap gap-4">
+              <IconButton 
+                icon={<Download />} 
+                onClick={() => alert('Download clicked!')}
+                aria-label="Download file"
+              />
+              <IconButton 
+                icon={<Upload />} 
+                variant="secondary"
+                onClick={() => alert('Upload clicked!')}
+                aria-label="Upload file"
+              />
+              <IconButton 
+                icon={<Edit />} 
+                size="lg"
+                onClick={() => alert('Edit clicked!')}
+                aria-label="Edit item"
+              />
+              <IconButton 
+                icon={<Trash2 />} 
+                variant="secondary"
+                size="sm"
+                onClick={() => alert('Delete clicked!')}
+                aria-label="Delete item"
+              />
+              <IconButton 
+                icon={<Download />} 
+                isLoading={isLoading}
+                onClick={() => {
+                  setIsLoading(true);
+                  setTimeout(() => setIsLoading(false), 2000);
+                }}
+                aria-label="Loading download"
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Text Input Section */}
+        <Card title="Text Inputs" variant="bordered">
+          <div className="space-y-6">
+            <TextInput
+              label="Username"
+              value={inputValue}
+              onChange={setInputValue}
+              placeholder="Enter your username"
+              description="This is a description for the username field"
+              required
+            />
+            
+            <TextInput
+              label="Email Address"
+              value={emailValue}
+              onChange={setEmailValue}
+              type="email"
+              placeholder="Enter your email"
+              error="Please enter a valid email address"
+            />
+            
+            <TextInput
+              label="Password"
+              value={passwordValue}
+              onChange={setPasswordValue}
+              type="password"
+              placeholder="Enter your password"
+              description="Password must be at least 8 characters"
+            />
+            
+            <TextInput
+              label="Disabled Input"
+              value="This input is disabled"
+              onChange={() => {}}
+              disabled
+              description="This input field is disabled"
+            />
+          </div>
+        </Card>
+
+        {/* Badge Section */}
+        <Card title="Badges" variant="bordered">
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-4">
+              <Badge>Default</Badge>
+              <Badge variant="success">Success</Badge>
+              <Badge variant="warning">Warning</Badge>
+              <Badge variant="error">Error</Badge>
+            </div>
+            
+            <Divider />
+            
+            <div className="flex flex-wrap gap-4">
+              <Badge size="sm">Small Default</Badge>
+              <Badge size="sm" variant="success">Small Success</Badge>
+              <Badge size="sm" variant="warning">Small Warning</Badge>
+              <Badge size="sm" variant="error">Small Error</Badge>
+            </div>
+          </div>
+        </Card>
+
+        {/* Form Controls Section */}
+        <Card title="Form Controls" variant="bordered">
+          <div className="space-y-6">
+            <RangeSlider
+              label="Volume Level"
+              value={sliderValue}
+              onChange={setSliderValue}
+              min={0}
+              max={100}
+              description="Adjust the volume from 0 to 100"
+            />
+            
+            <div className="space-y-4">
+              <Checkbox
+                label="Enable notifications"
+                checked={checkboxValue}
+                onChange={setCheckboxValue}
+                description="Receive push notifications for updates"
+              />
+              
+              <Switch
+                label="Dark mode"
+                checked={switchValue}
+                onChange={setSwitchValue}
+                description="Toggle between light and dark themes"
+              />
+            </div>
+            
+            <div className="space-y-3">
+              <Paragraph size="sm">Select your preferred option:</Paragraph>
+              <Radio
+                label="Option 1"
+                checked={radioValue === 'option1'}
+                onChange={() => setRadioValue('option1')}
+              />
+              <Radio
+                label="Option 2"
+                checked={radioValue === 'option2'}
+                onChange={() => setRadioValue('option2')}
+              />
+              <Radio
+                label="Option 3"
+                checked={radioValue === 'option3'}
+                onChange={() => setRadioValue('option3')}
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* TreeView Section */}
+        <Card title="TreeView Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              File explorer-style tree view with expandable nodes and action buttons.
+            </Paragraph>
+            
+            <TreeView
+              data={treeData}
+              maxHeight={400}
+              getNodeIcon={getFileIcon}
+              onNodeClick={(node) => alert(`Clicked: ${node.label}`)}
+              onNodeAction={(node) => alert(`Actions for: ${node.label}`)}
+            />
+          </div>
+        </Card>
+
+        {/* Textarea Section */}
+        <Card title="Textarea Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              Auto-growing textarea with minimum and maximum rows.
+            </Paragraph>
+            
+            <Textarea
+              label="Description"
+              value={textareaValue}
+              onChange={setTextareaValue}
+              placeholder="Enter your description here..."
+              minRows={3}
+              maxRows={8}
+              description="This textarea will grow as you type, up to 8 rows maximum"
+            />
+          </div>
+        </Card>
+
+        {/* Clipboard Section */}
+        <Card title="Clipboard Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              Copy commands and text with the clipboard component. Text scrolls when it overflows.
+            </Paragraph>
+            
+            <Clipboard 
+              text="npm install lucide-react" 
+              label="Command"
+            />
+            
+            <Clipboard 
+              text="This is a very long text that will definitely overflow and demonstrate the scrolling animation feature of the clipboard component" 
+              label="Long Text"
+            />
+            
+            <Clipboard 
+              text="pnpm add @types/node --save-dev" 
+              label="Package Manager"
+            />
+          </div>
+        </Card>
+
+        {/* Loading Spinner Section */}
+        <Card title="Loading Spinner" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              CLI-style loading spinner in different sizes.
+            </Paragraph>
+            
+            <div className="flex items-center gap-4">
+              <LoadingSpinner size="sm" />
+              <LoadingSpinner size="base" />
+              <LoadingSpinner size="lg" />
+            </div>
+          </div>
+        </Card>
+
+        {/* Layout Example */}
+        <Card title="Layout Example" variant="bordered">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <Header size="sm">Left Column</Header>
+              <Paragraph size="sm">
+                This demonstrates how the components work together in a layout.
+                The grid system and spacing create a clean, organized interface.
+              </Paragraph>
+              <Button variant="secondary">
+                Action Button
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              <Header size="sm">Right Column</Header>
+              <div className="flex flex-wrap gap-2">
+                <Badge>Status</Badge>
+                <Badge variant="success">Online</Badge>
+              </div>
+              <TextInput
+                label="Quick Input"
+                value=""
+                onChange={() => {}}
+                placeholder="Type something..."
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center text-orange-300/80 text-sm">
+          <Paragraph size="sm">
+            Monochromatic Terminal UI Design System
+          </Paragraph>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default App
