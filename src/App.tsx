@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createColumnHelper } from '@tanstack/react-table'
 import {
   Button,
   IconButton,
@@ -16,6 +17,10 @@ import {
   Clipboard,
   TreeView,
   LoadingSpinner,
+  Table,
+  Breadcrumbs,
+  Select,
+  TransferList,
   type TreeNode
 } from './components'
 import { Zap, Settings, Copy, Check, Download, Upload, Trash2, Edit, ChevronRight, Folder, File, FolderOpen, FileText, Code, Image, Music, Video } from 'lucide-react'
@@ -30,6 +35,20 @@ function App() {
   const [radioValue, setRadioValue] = useState('option1')
   const [textareaValue, setTextareaValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [selectValue, setSelectValue] = useState('')
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>([])
+  const [transferLeftItems, setTransferLeftItems] = useState([
+    { id: '1', label: 'React' },
+    { id: '2', label: 'TypeScript' },
+    { id: '3', label: 'Tailwind CSS' },
+    { id: '4', label: 'Vite' },
+    { id: '5', label: 'Lucide React' },
+    { id: '6', label: 'TanStack Table' },
+  ])
+  const [transferRightItems, setTransferRightItems] = useState([
+    { id: '7', label: 'Node.js' },
+    { id: '8', label: 'Express' },
+  ])
 
   // Sample tree data
   const treeData: TreeNode[] = [
@@ -96,6 +115,70 @@ function App() {
       ]
     }
   ]
+
+  // Sample table data
+  const tableData = [
+    { id: '1', name: 'OTE 002', value: 705700, status: 'Active', category: 'Main Grp' },
+    { id: '2', name: 'OTE 003', value: 909964, status: 'Inactive', category: 'Main Grp' },
+    { id: '3', name: 'OTE 004', value: 396, status: 'Active', category: 'Periods' },
+    { id: '4', name: 'OTE 005', value: 68, status: 'Active', category: 'Periods' },
+    { id: '5', name: 'OTE 006', value: 1.6735, status: 'Inactive', category: 'Chem' },
+    { id: '6', name: 'OTE 007', value: 1105, status: 'Active', category: 'Chem' },
+    { id: '7', name: 'OTE 008', value: 234, status: 'Active', category: 'Main Grp' },
+    { id: '8', name: 'OTE 009', value: 567, status: 'Inactive', category: 'Periods' },
+    { id: '9', name: 'OTE 010', value: 890, status: 'Active', category: 'Chem' },
+    { id: '10', name: 'OTE 011', value: 123, status: 'Active', category: 'Main Grp' },
+  ]
+
+  const columnHelper = createColumnHelper<typeof tableData[0]>()
+
+  const tableColumns = [
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('value', {
+      header: 'Value',
+      cell: info => info.getValue(),
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: info => (
+        <Badge variant={info.getValue() === 'Active' ? 'success' : 'warning'}>
+          {info.getValue()}
+        </Badge>
+      ),
+    }),
+    columnHelper.accessor('category', {
+      header: 'Category',
+      cell: info => info.getValue(),
+    }),
+  ]
+
+  // Sample select options
+  const selectOptions = [
+    { value: 'react', label: 'React' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'tailwind', label: 'Tailwind CSS' },
+    { value: 'vite', label: 'Vite' },
+    { value: 'lucide', label: 'Lucide React' },
+    { value: 'tanstack', label: 'TanStack Table' },
+    { value: 'node', label: 'Node.js' },
+    { value: 'express', label: 'Express' },
+  ]
+
+  // Transfer list handlers
+  const handleTransfer = (fromLeft: boolean, itemIds: string[]) => {
+    if (fromLeft) {
+      const itemsToMove = transferLeftItems.filter(item => itemIds.includes(item.id))
+      setTransferLeftItems(prev => prev.filter(item => !itemIds.includes(item.id)))
+      setTransferRightItems(prev => [...prev, ...itemsToMove])
+    } else {
+      const itemsToMove = transferRightItems.filter(item => itemIds.includes(item.id))
+      setTransferRightItems(prev => prev.filter(item => !itemIds.includes(item.id)))
+      setTransferLeftItems(prev => [...prev, ...itemsToMove])
+    }
+  }
 
   // Custom icon function for file explorer
   const getFileIcon = (node: TreeNode, isOpen: boolean) => {
@@ -440,6 +523,117 @@ function App() {
               <LoadingSpinner size="base" />
               <LoadingSpinner size="lg" />
             </div>
+          </div>
+        </Card>
+
+        {/* Table Component */}
+        <Card title="Table Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              High-performance table with sorting, pagination, and monochromatic styling inspired by terminal interfaces.
+            </Paragraph>
+            
+            <Table
+              data={tableData}
+              columns={tableColumns as any}
+              maxHeight={400}
+              enableSorting={true}
+              enablePagination={true}
+              pageSize={5}
+            />
+          </div>
+        </Card>
+
+        {/* Breadcrumbs Component */}
+        <Card title="Breadcrumbs Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              Navigation breadcrumbs with customizable separators and home icon.
+            </Paragraph>
+            
+            <Breadcrumbs
+              items={[
+                { label: 'Projects', href: '#projects' },
+                { label: 'monopollis', href: '#monopollis' },
+                { label: 'src', href: '#src' },
+                { label: 'components' }
+              ]}
+              showHome={true}
+              homeHref="#home"
+            />
+            
+            <Divider />
+            
+            <Breadcrumbs
+              items={[
+                { label: 'Settings', href: '#settings' },
+                { label: 'User Preferences', href: '#preferences' },
+                { label: 'Theme' }
+              ]}
+              showHome={false}
+              separator={<span className="text-orange-300/50">/</span>}
+            />
+          </div>
+        </Card>
+
+        {/* Select Component */}
+        <Card title="Select Component" variant="bordered">
+          <div className="space-y-6">
+            <Paragraph size="sm">
+              Select dropdown with autocomplete search functionality.
+            </Paragraph>
+            
+            <Select
+              label="Choose Technology"
+              value={selectValue}
+              onChange={(value) => setSelectValue(value as string)}
+              options={selectOptions}
+              placeholder="Select a technology..."
+              description="Choose your preferred technology stack"
+              allowClear={true}
+              searchable={true}
+            />
+            
+            <Select
+              label="Multi-Select Technologies"
+              value={multiSelectValue}
+              onChange={(value) => setMultiSelectValue(value as string[])}
+              options={selectOptions}
+              placeholder="Select multiple technologies..."
+              description="Choose multiple technologies for your stack"
+              allowClear={true}
+              searchable={true}
+              multiselect={true}
+            />
+            
+            <Select
+              label="Disabled Select"
+              value=""
+              onChange={() => {}}
+              options={selectOptions}
+              placeholder="This select is disabled"
+              disabled={true}
+            />
+          </div>
+        </Card>
+
+        {/* Transfer List Component */}
+        <Card title="Transfer List Component" variant="bordered">
+          <div className="space-y-4">
+            <Paragraph size="sm">
+              Transfer items between two lists with search and bulk selection capabilities.
+            </Paragraph>
+            
+            <TransferList
+              leftTitle="Available Technologies"
+              rightTitle="Selected Technologies"
+              leftItems={transferLeftItems}
+              rightItems={transferRightItems}
+              onTransfer={handleTransfer}
+              maxHeight={250}
+              searchable={true}
+              selectAll={true}
+            />
           </div>
         </Card>
 
