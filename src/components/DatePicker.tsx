@@ -1,39 +1,112 @@
-import React, { useState, useRef } from 'react';
-import { useDatePicker } from '@react-aria/datepicker';
-import { useCalendarGrid, useCalendarCell } from '@react-aria/calendar';
-import { useButton } from '@react-aria/button';
-import { useOverlay, DismissButton } from '@react-aria/overlays';
-import { CalendarDate, getLocalTimeZone, today, parseDate, createCalendar } from '@internationalized/date';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useRef } from "react";
+import { useButton } from "@react-aria/button";
+import { useOverlay, DismissButton } from "@react-aria/overlays";
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  today,
+  parseDate,
+} from "@internationalized/date";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
+/**
+ * Props for the DatePicker component.
+ * @interface DatePickerProps
+ */
 interface DatePickerProps {
+  /** The label text displayed above the date picker input */
   label: string;
+  /** The currently selected date value */
   value?: Date;
+  /** Callback function called when a date is selected or cleared */
   onChange?: (date: Date | null) => void;
+  /** Placeholder text displayed when no date is selected */
   placeholder?: string;
+  /** Optional descriptive text displayed below the input */
   description?: string;
+  /** Error message to display below the input */
   error?: string;
+  /** Whether the date picker is disabled and cannot be interacted with */
   disabled?: boolean;
+  /** Whether the date picker is required (shows required indicator) */
   required?: boolean;
+  /** Additional CSS classes to apply to the date picker container */
   className?: string;
+  /** Unique identifier for the date picker input element */
   id?: string;
 }
 
+/**
+ * A comprehensive date picker component with calendar overlay and accessibility features.
+ *
+ * The DatePicker component provides a user-friendly interface for selecting dates:
+ * - Input field with calendar icon that opens a calendar overlay
+ * - Full calendar grid with month/year navigation
+ * - Keyboard navigation and screen reader support
+ * - Error handling and validation states
+ * - Required field indication
+ * - Customizable styling and descriptions
+ * - Responsive design with proper focus management
+ *
+ * @component
+ * @param {DatePickerProps} props - The props for the DatePicker component
+ * @param {string} props.label - The label text displayed above the date picker input
+ * @param {Date} [props.value] - The currently selected date value
+ * @param {(date: Date | null) => void} [props.onChange] - Callback function called when a date is selected
+ * @param {string} [props.placeholder='Select a date...'] - Placeholder text displayed when no date is selected
+ * @param {string} [props.description] - Optional descriptive text displayed below the input
+ * @param {string} [props.error] - Error message to display below the input
+ * @param {boolean} [props.disabled=false] - Whether the date picker is disabled
+ * @param {boolean} [props.required=false] - Whether the date picker is required
+ * @param {string} [props.className] - Additional CSS classes to apply to the container
+ * @param {string} [props.id] - Unique identifier for the date picker input
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <DatePicker
+ *   label="Select Date"
+ *   value={selectedDate}
+ *   onChange={setSelectedDate}
+ * />
+ *
+ * // With validation and description
+ * <DatePicker
+ *   label="Birth Date"
+ *   value={birthDate}
+ *   onChange={setBirthDate}
+ *   description="Please select your date of birth"
+ *   required={true}
+ *   error={birthDateError}
+ * />
+ *
+ * // Disabled state
+ * <DatePicker
+ *   label="Event Date"
+ *   value={eventDate}
+ *   onChange={setEventDate}
+ *   disabled={true}
+ *   description="Date selection is currently disabled"
+ * />
+ * ```
+ *
+ * @returns {JSX.Element} A date picker component with calendar overlay and input field
+ */
 export const DatePicker: React.FC<DatePickerProps> = ({
   label,
   value,
   onChange,
-  placeholder = 'Select a date...',
+  placeholder = "Select a date...",
   description,
   error,
   disabled = false,
   required = false,
-  className = '',
+  className = "",
   id,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(
-    value ? parseDate(value.toISOString().split('T')[0]) : null
+    value ? parseDate(value.toISOString().split("T")[0]) : null
   );
   const [currentMonth, setCurrentMonth] = useState<CalendarDate>(
     selectedDate || today(getLocalTimeZone())
@@ -56,8 +129,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     setCurrentMonth(currentMonth.add({ months: 1 }));
   };
 
-
-
   const { overlayProps } = useOverlay(
     {
       isOpen,
@@ -68,29 +139,19 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     overlayRef
   );
 
-  const baseClasses = `
-    relative w-full
-  `;
-
-  const labelClasses = `
-    block text-sm font-sans font-medium text-orange-300 mb-2
-  `;
-
-  const descriptionClasses = `
-    mt-1 text-xs font-sans text-orange-300/80
-  `;
-
-  const errorClasses = `
-    mt-1 text-xs font-sans text-red-400
-  `;
-
+  const baseClasses = "relative w-full";
+  const labelClasses =
+    "block text-sm font-sans font-medium text-orange-300 mb-2";
+  const descriptionClasses = "mt-1 text-xs font-sans text-orange-300/80";
+  const errorClasses = "mt-1 text-xs font-sans text-red-400";
   const overlayClasses = `
     absolute top-full left-0 right-0 z-50 mt-1
     bg-black border-2 border-orange-300/50 rounded-md
     shadow-lg p-4
   `;
 
-  const datePickerId = id || `datepicker-${Math.random().toString(36).substr(2, 9)}`;
+  const datePickerId =
+    id || `datepicker-${Math.random().toString(36).substr(2, 9)}`;
   const descriptionId = description ? `${datePickerId}-description` : undefined;
   const errorId = error ? `${datePickerId}-error` : undefined;
 
@@ -98,14 +159,22 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     <div className={`${baseClasses} ${className}`}>
       <label htmlFor={datePickerId} className={labelClasses}>
         {label}
-        {required && <span className="text-red-400 ml-1" aria-label="required">*</span>}
+        {required && (
+          <span className="text-red-400 ml-1" aria-label="required">
+            *
+          </span>
+        )}
       </label>
-      
+
       <div className="relative">
         <input
           id={datePickerId}
           type="text"
-          value={selectedDate ? selectedDate.toDate(getLocalTimeZone()).toLocaleDateString() : ''}
+          value={
+            selectedDate
+              ? selectedDate.toDate(getLocalTimeZone()).toLocaleDateString()
+              : ""
+          }
           readOnly
           className={`
             w-full px-4 py-2 rounded-md
@@ -116,12 +185,14 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             disabled:opacity-50 disabled:cursor-not-allowed
             transition-all duration-200
             cursor-pointer
-            ${error ? 'border-red-400' : ''}
+            ${error ? "border-red-400" : ""}
           `}
           placeholder={placeholder}
           disabled={disabled}
           required={required}
-          aria-describedby={[descriptionId, errorId].filter(Boolean).join(' ') || undefined}
+          aria-describedby={
+            [descriptionId, errorId].filter(Boolean).join(" ") || undefined
+          }
           aria-invalid={!!error}
           onMouseDown={() => setIsClicking(true)}
           onClick={() => {
@@ -139,11 +210,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         />
 
         {isOpen && (
-          <div
-            {...overlayProps}
-            ref={overlayRef}
-            className={overlayClasses}
-          >
+          <div {...overlayProps} ref={overlayRef} className={overlayClasses}>
             <DismissButton onDismiss={() => setIsOpen(false)} />
             <CalendarGrid
               currentMonth={currentMonth}
@@ -173,16 +240,39 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   );
 };
 
-// Calendar Grid Component
+/**
+ * Props for the CalendarGrid component.
+ * @interface CalendarGridProps
+ */
 interface CalendarGridProps {
+  /** The currently displayed month in the calendar */
   currentMonth: CalendarDate;
+  /** The currently selected date */
   selectedDate: CalendarDate | null;
+  /** Callback function called when a date is selected */
   onDateSelect: (date: CalendarDate) => void;
+  /** Callback function called when navigating to the previous month */
   onPreviousMonth: () => void;
+  /** Callback function called when navigating to the next month */
   onNextMonth: () => void;
+  /** Callback function called when the month is changed via dropdown */
   onMonthChange: (month: CalendarDate) => void;
 }
 
+/**
+ * Calendar grid component that displays a month view with navigation controls.
+ *
+ * The CalendarGrid component renders a full month calendar with:
+ * - Month/year navigation with previous/next buttons
+ * - Month and year dropdown selectors
+ * - Week day headers
+ * - Calendar cells for each day
+ * - Proper date calculations and grid layout
+ *
+ * @component
+ * @param {CalendarGridProps} props - The props for the CalendarGrid component
+ * @returns {JSX.Element} A calendar grid component with month navigation and day cells
+ */
 const CalendarGrid: React.FC<CalendarGridProps> = ({
   currentMonth,
   selectedDate,
@@ -194,7 +284,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   const { buttonProps: prevButtonProps } = useButton(
     {
       onPress: onPreviousMonth,
-      'aria-label': 'Previous month',
+      "aria-label": "Previous month",
     },
     useRef<HTMLButtonElement>(null)
   );
@@ -202,26 +292,34 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   const { buttonProps: nextButtonProps } = useButton(
     {
       onPress: onNextMonth,
-      'aria-label': 'Next month',
+      "aria-label": "Next month",
     },
     useRef<HTMLButtonElement>(null)
   );
 
   // Generate calendar grid
-  const startOfMonth = new CalendarDate(currentMonth.year, currentMonth.month, 1);
-  const endOfMonth = new CalendarDate(currentMonth.year, currentMonth.month, currentMonth.calendar.getDaysInMonth(currentMonth));
-  
+  const startOfMonth = new CalendarDate(
+    currentMonth.year,
+    currentMonth.month,
+    1
+  );
+  const endOfMonth = new CalendarDate(
+    currentMonth.year,
+    currentMonth.month,
+    currentMonth.calendar.getDaysInMonth(currentMonth)
+  );
+
   // Get the start of the week for the first day of the month
   const firstDayOfWeek = startOfMonth.toDate(getLocalTimeZone()).getDay();
   const startDate = startOfMonth.subtract({ days: firstDayOfWeek });
-  
+
   // Get the end of the week for the last day of the month
   const lastDayOfWeek = endOfMonth.toDate(getLocalTimeZone()).getDay();
   const endDate = endOfMonth.add({ days: 6 - lastDayOfWeek });
 
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const days: CalendarDate[] = [];
-  
+
   let current = startDate;
   while (current.compare(endDate) <= 0) {
     days.push(current);
@@ -242,21 +340,31 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
           <select
             value={currentMonth.month}
             onChange={(e) => {
-              const newMonth = new CalendarDate(currentMonth.year, parseInt(e.target.value), 1);
+              const newMonth = new CalendarDate(
+                currentMonth.year,
+                parseInt(e.target.value),
+                1
+              );
               onMonthChange(newMonth);
             }}
             className="bg-black text-orange-300 border border-orange-300/50 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-1 focus:ring-offset-black"
           >
             {Array.from({ length: 12 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
-                {new Date(2024, i).toLocaleDateString(undefined, { month: 'long' })}
+                {new Date(2024, i).toLocaleDateString(undefined, {
+                  month: "long",
+                })}
               </option>
             ))}
           </select>
           <select
             value={currentMonth.year}
             onChange={(e) => {
-              const newMonth = new CalendarDate(parseInt(e.target.value), currentMonth.month, 1);
+              const newMonth = new CalendarDate(
+                parseInt(e.target.value),
+                currentMonth.month,
+                1
+              );
               onMonthChange(newMonth);
             }}
             className="bg-black text-orange-300 border border-orange-300/50 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-1 focus:ring-offset-black"
@@ -297,7 +405,9 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
             key={date.toString()}
             date={date}
             isSelected={selectedDate?.compare(date) === 0}
-            isCurrentMonth={date.compare(startOfMonth) >= 0 && date.compare(endOfMonth) <= 0}
+            isCurrentMonth={
+              date.compare(startOfMonth) >= 0 && date.compare(endOfMonth) <= 0
+            }
             onSelect={() => onDateSelect(date)}
           />
         ))}
@@ -306,14 +416,34 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   );
 };
 
-// Calendar Cell Component
+/**
+ * Props for the CalendarCell component.
+ * @interface CalendarCellProps
+ */
 interface CalendarCellProps {
+  /** The date represented by this calendar cell */
   date: CalendarDate;
+  /** Whether this date is currently selected */
   isSelected: boolean;
+  /** Whether this date belongs to the current month being displayed */
   isCurrentMonth: boolean;
+  /** Callback function called when this date cell is selected */
   onSelect: () => void;
 }
 
+/**
+ * Individual calendar cell component representing a single day.
+ *
+ * The CalendarCell component renders a clickable date cell with:
+ * - Different styling for selected, current month, and other month dates
+ * - Hover effects and focus management
+ * - Proper accessibility attributes
+ * - Smooth transitions and visual feedback
+ *
+ * @component
+ * @param {CalendarCellProps} props - The props for the CalendarCell component
+ * @returns {JSX.Element} A calendar cell component representing a single day
+ */
 const CalendarCell: React.FC<CalendarCellProps> = ({
   date,
   isSelected,
@@ -331,23 +461,21 @@ const CalendarCell: React.FC<CalendarCellProps> = ({
     h-8 w-8 rounded text-sm font-sans
     focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-1 focus:ring-offset-black
     transition-all duration-200
-    ${isSelected
-      ? 'bg-orange-300 text-black font-medium'
-      : isCurrentMonth
-      ? 'text-orange-300 hover:bg-orange-300/10'
-      : 'text-orange-300/30'
+    ${
+      isSelected
+        ? "bg-orange-300 text-black font-medium"
+        : isCurrentMonth
+        ? "text-orange-300 hover:bg-orange-300/10"
+        : "text-orange-300/30"
     }
     cursor-pointer
   `;
 
   return (
     <div className="text-center">
-      <button
-        {...buttonProps}
-        className={cellClasses}
-      >
+      <button {...buttonProps} className={cellClasses}>
         {date.day}
       </button>
     </div>
   );
-}; 
+};

@@ -1,74 +1,201 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
-import { Checkbox } from './Checkbox';
+import React, { useState, useRef, useEffect } from "react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
+import { Checkbox } from "./Checkbox";
 
+/**
+ * Represents a single option in the select dropdown.
+ * @interface SelectOption
+ */
 interface SelectOption {
+  /** The value of the option (used internally) */
   value: string;
+  /** The display label for the option */
   label: string;
+  /** Whether this option is disabled and cannot be selected */
   disabled?: boolean;
 }
 
+/**
+ * Props for the Select component.
+ * @interface SelectProps
+ */
 interface SelectProps {
+  /** The label text displayed above the select input */
   label: string;
+  /** The currently selected value(s) - string for single select, string[] for multiselect */
   value: string | string[];
+  /** Callback function called when the selection changes */
   onChange: (value: string | string[]) => void;
+  /** Array of options to display in the dropdown */
   options: SelectOption[];
+  /** Placeholder text displayed when no option is selected */
   placeholder?: string;
+  /** Optional descriptive text displayed below the select input */
   description?: string;
+  /** Error message to display below the select input */
   error?: string;
+  /** Whether the select input is disabled and cannot be interacted with */
   disabled?: boolean;
+  /** Whether the select input is required (shows required indicator) */
   required?: boolean;
+  /** Additional CSS classes to apply to the select container */
   className?: string;
+  /** Whether to show a clear button to reset the selection */
   allowClear?: boolean;
+  /** Whether to enable search functionality within the dropdown */
   searchable?: boolean;
+  /** Whether to allow multiple selections */
   multiselect?: boolean;
+  /** Unique identifier for the select input element */
   id?: string;
 }
 
+/**
+ * A comprehensive select component with advanced features including search, multiselect, and accessibility.
+ *
+ * The Select component provides a powerful dropdown selection interface with:
+ * - Single and multiple selection modes
+ * - Searchable dropdown with real-time filtering
+ * - Clear selection functionality
+ * - Customizable options with disabled state support
+ * - Keyboard navigation and accessibility features
+ * - Error handling and validation states
+ * - Required field indication
+ * - Customizable styling and descriptions
+ * - Responsive design with proper focus management
+ * - Dropdown positioning and click-outside handling
+ * - Visual feedback for selected states
+ *
+ * This component is ideal for forms, settings panels, and any interface where
+ * users need to select from a list of options with advanced interaction features.
+ *
+ * @component
+ * @param {SelectProps} props - The props for the Select component
+ * @param {string} props.label - The label text displayed above the select input
+ * @param {string | string[]} props.value - The currently selected value(s)
+ * @param {(value: string | string[]) => void} props.onChange - Callback function called when selection changes
+ * @param {SelectOption[]} props.options - Array of options to display in the dropdown
+ * @param {string} [props.placeholder='Select an option...'] - Placeholder text when no option is selected
+ * @param {string} [props.description] - Optional descriptive text displayed below the input
+ * @param {string} [props.error] - Error message to display below the input
+ * @param {boolean} [props.disabled=false] - Whether the select input is disabled
+ * @param {boolean} [props.required=false] - Whether the select input is required
+ * @param {string} [props.className] - Additional CSS classes to apply to the container
+ * @param {boolean} [props.allowClear=false] - Whether to show a clear button
+ * @param {boolean} [props.searchable=true] - Whether to enable search functionality
+ * @param {boolean} [props.multiselect=false] - Whether to allow multiple selections
+ * @param {string} [props.id] - Unique identifier for the select input
+ *
+ * @example
+ * ```tsx
+ * // Basic single select
+ * <Select
+ *   label="Country"
+ *   value={selectedCountry}
+ *   onChange={setSelectedCountry}
+ *   options={countryOptions}
+ * />
+ *
+ * // Multiselect with search and clear
+ * <Select
+ *   label="Skills"
+ *   value={selectedSkills}
+ *   onChange={setSelectedSkills}
+ *   options={skillOptions}
+ *   multiselect={true}
+ *   searchable={true}
+ *   allowClear={true}
+ *   placeholder="Select your skills..."
+ * />
+ *
+ * // With validation and description
+ * <Select
+ *   label="Category"
+ *   value={selectedCategory}
+ *   onChange={setSelectedCategory}
+ *   options={categoryOptions}
+ *   required={true}
+ *   description="Please select a category for your content"
+ *   error={categoryError}
+ * />
+ *
+ * // Disabled state
+ * <Select
+ *   label="Theme"
+ *   value={selectedTheme}
+ *   onChange={setSelectedTheme}
+ *   options={themeOptions}
+ *   disabled={true}
+ *   description="Theme selection is currently unavailable"
+ * />
+ *
+ * // Custom options with disabled state
+ * const options = [
+ *   { value: 'basic', label: 'Basic Plan', disabled: false },
+ *   { value: 'pro', label: 'Pro Plan', disabled: false },
+ *   { value: 'enterprise', label: 'Enterprise Plan', disabled: true }
+ * ];
+ *
+ * <Select
+ *   label="Plan"
+ *   value={selectedPlan}
+ *   onChange={setSelectedPlan}
+ *   options={options}
+ *   description="Choose your subscription plan"
+ * />
+ * ```
+ *
+ * @returns {JSX.Element} A comprehensive select component with dropdown, search, and selection features
+ */
 export const Select: React.FC<SelectProps> = ({
   label,
   value,
   onChange,
   options,
-  placeholder = 'Select an option...',
+  placeholder = "Select an option...",
   description,
   error,
   disabled = false,
   required = false,
-  className = '',
+  className = "",
   allowClear = false,
   searchable = true,
   multiselect = false,
   id,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const selectedOptions = multiselect 
-    ? options.filter(option => (value as string[]).includes(option.value))
-    : options.filter(option => option.value === value);
+  const selectedOptions = multiselect
+    ? options.filter((option) => (value as string[]).includes(option.value))
+    : options.filter((option) => option.value === value);
   const selectedOption = selectedOptions[0];
 
-  const filteredOptions = searchable && searchValue
-    ? options.filter(option => 
-        option.label.toLowerCase().includes(searchValue.toLowerCase()) &&
-        !option.disabled
-      )
-    : options.filter(option => !option.disabled);
+  const filteredOptions =
+    searchable && searchValue
+      ? options.filter(
+          (option) =>
+            option.label.toLowerCase().includes(searchValue.toLowerCase()) &&
+            !option.disabled
+        )
+      : options.filter((option) => !option.disabled);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+      if (
+        selectRef.current &&
+        !selectRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
-        setSearchValue('');
+        setSearchValue("");
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -79,24 +206,24 @@ export const Select: React.FC<SelectProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return;
-    
+
     switch (e.key) {
-      case 'Enter':
-      case ' ':
+      case "Enter":
+      case " ":
         e.preventDefault();
         setIsOpen(!isOpen);
         break;
-      case 'Escape':
+      case "Escape":
         setIsOpen(false);
-        setSearchValue('');
+        setSearchValue("");
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
         if (!isOpen) {
           setIsOpen(true);
         }
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
         if (!isOpen) {
           setIsOpen(true);
@@ -110,22 +237,22 @@ export const Select: React.FC<SelectProps> = ({
       if (multiselect) {
         const currentValues = value as string[];
         const newValues = currentValues.includes(option.value)
-          ? currentValues.filter(v => v !== option.value)
+          ? currentValues.filter((v) => v !== option.value)
           : [...currentValues, option.value];
         onChange(newValues);
       } else {
         onChange(option.value);
         setIsOpen(false);
-        setSearchValue('');
+        setSearchValue("");
       }
     }
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onChange(multiselect ? [] : '');
+    onChange(multiselect ? [] : "");
     setIsOpen(false);
-    setSearchValue('');
+    setSearchValue("");
   };
 
   const baseClasses = `
@@ -142,8 +269,8 @@ export const Select: React.FC<SelectProps> = ({
     transition-all duration-200
     flex items-center justify-between
     cursor-pointer
-    ${isFocused ? 'border-orange-300' : ''}
-    ${error ? 'border-red-400' : ''}
+    ${isFocused ? "border-orange-300" : ""}
+    ${error ? "border-red-400" : ""}
   `;
 
   const labelClasses = `
@@ -184,9 +311,13 @@ export const Select: React.FC<SelectProps> = ({
     <div className={`${baseClasses} ${className}`}>
       <label htmlFor={selectId} className={labelClasses}>
         {label}
-        {required && <span className="text-red-400 ml-1" aria-label="required">*</span>}
+        {required && (
+          <span className="text-red-400 ml-1" aria-label="required">
+            *
+          </span>
+        )}
       </label>
-      
+
       <div ref={selectRef} className="relative">
         <div
           className={triggerClasses}
@@ -205,25 +336,30 @@ export const Select: React.FC<SelectProps> = ({
               selectedOptions.length > 0 ? (
                 <div className="flex flex-wrap gap-1">
                   {selectedOptions.map((option) => (
-                    <span key={option.value} className="bg-orange-300/20 text-orange-300 px-2 py-1 rounded text-sm">
+                    <span
+                      key={option.value}
+                      className="bg-orange-300/20 text-orange-300 px-2 py-1 rounded text-sm"
+                    >
                       {option.label}
                     </span>
                   ))}
                 </div>
               ) : (
-                <span className="text-orange-300/50 truncate">{placeholder}</span>
+                <span className="text-orange-300/50 truncate">
+                  {placeholder}
+                </span>
               )
+            ) : selectedOption ? (
+              <span className="truncate">{selectedOption.label}</span>
             ) : (
-              selectedOption ? (
-                <span className="truncate">{selectedOption.label}</span>
-              ) : (
-                <span className="text-orange-300/50 truncate">{placeholder}</span>
-              )
+              <span className="text-orange-300/50 truncate">{placeholder}</span>
             )}
           </div>
-          
-                      <div className="flex items-center gap-2 flex-shrink-0">
-              {allowClear && ((multiselect && (value as string[]).length > 0) || (!multiselect && value)) && (
+
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {allowClear &&
+              ((multiselect && (value as string[]).length > 0) ||
+                (!multiselect && value)) && (
                 <button
                   type="button"
                   onClick={handleClear}
@@ -233,16 +369,20 @@ export const Select: React.FC<SelectProps> = ({
                   <X className="w-4 h-4" />
                 </button>
               )}
-              {isOpen ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </div>
+            {isOpen ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </div>
         </div>
 
         {isOpen && (
-          <div className={dropdownClasses} id={`${selectId}-listbox`} role="listbox">
+          <div
+            className={dropdownClasses}
+            id={`${selectId}-listbox`}
+            role="listbox"
+          >
             {searchable && (
               <div className="p-2 border-b border-orange-300/30">
                 <input
@@ -255,16 +395,22 @@ export const Select: React.FC<SelectProps> = ({
                 />
               </div>
             )}
-            
+
             <div className="py-1">
               {filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <div
                     key={option.value}
-                    className={option.disabled ? disabledOptionClasses : optionClasses}
+                    className={
+                      option.disabled ? disabledOptionClasses : optionClasses
+                    }
                     onClick={() => handleSelect(option)}
                     role="option"
-                    aria-selected={multiselect ? (value as string[]).includes(option.value) : option.value === value}
+                    aria-selected={
+                      multiselect
+                        ? (value as string[]).includes(option.value)
+                        : option.value === value
+                    }
                   >
                     <div className="flex items-center gap-2">
                       {multiselect && (
@@ -276,7 +422,9 @@ export const Select: React.FC<SelectProps> = ({
                           className="flex-shrink-0"
                         />
                       )}
-                      <span className={multiselect ? 'ml-2' : ''}>{option.label}</span>
+                      <span className={multiselect ? "ml-2" : ""}>
+                        {option.label}
+                      </span>
                     </div>
                   </div>
                 ))
@@ -303,4 +451,4 @@ export const Select: React.FC<SelectProps> = ({
       )}
     </div>
   );
-}; 
+};

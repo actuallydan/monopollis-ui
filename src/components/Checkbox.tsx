@@ -1,23 +1,95 @@
-import React from 'react';
+import React from "react";
 
+/**
+ * Props for the Checkbox component.
+ * @interface CheckboxProps
+ */
 interface CheckboxProps {
+  /** The text label displayed next to the checkbox */
   label: string;
+  /** Whether the checkbox is currently checked */
   checked: boolean;
+  /** Function called when the checkbox state changes, receives the new checked state */
   onChange: (checked: boolean) => void;
+  /** Whether the checkbox is disabled and cannot be interacted with */
   disabled?: boolean;
+  /** Additional CSS classes to apply to the checkbox container */
   className?: string;
+  /** Unique identifier for the checkbox input element */
   id?: string;
+  /** Optional descriptive text displayed below the checkbox and label */
   description?: string;
 }
 
+/**
+ * A fully-featured checkbox component with accessibility features and custom styling.
+ *
+ * The Checkbox component provides a customizable checkbox input with:
+ * - Custom styled checkbox appearance with orange theme
+ * - Accessible label association and description support
+ * - Focus management with visible focus rings
+ * - Disabled state handling with proper visual feedback
+ * - Smooth transitions and hover effects
+ * - Automatic ID generation for accessibility
+ * - ARIA attributes for screen reader support
+ * - Responsive design with proper spacing and typography
+ *
+ * @component
+ * @param {CheckboxProps} props - The props for the Checkbox component
+ * @param {string} props.label - The text label displayed next to the checkbox
+ * @param {boolean} props.checked - Whether the checkbox is currently checked
+ * @param {(checked: boolean) => void} props.onChange - Function called when checkbox state changes
+ * @param {boolean} [props.disabled=false] - Whether the checkbox is disabled
+ * @param {string} [props.className] - Additional CSS classes to apply to the container
+ * @param {string} [props.id] - Unique identifier for the checkbox input
+ * @param {string} [props.description] - Optional descriptive text displayed below the checkbox
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <Checkbox
+ *   label="Accept terms and conditions"
+ *   checked={accepted}
+ *   onChange={setAccepted}
+ * />
+ *
+ * // With description and custom styling
+ * <Checkbox
+ *   label="Subscribe to newsletter"
+ *   checked={subscribed}
+ *   onChange={setSubscribed}
+ *   description="Receive updates about new features and announcements"
+ *   className="my-4"
+ * />
+ *
+ * // Disabled state
+ * <Checkbox
+ *   label="Premium feature"
+ *   checked={false}
+ *   onChange={() => {}}
+ *   disabled={true}
+ *   description="Upgrade to access this feature"
+ * />
+ *
+ * // With custom ID
+ * <Checkbox
+ *   id="custom-checkbox"
+ *   label="Custom checkbox"
+ *   checked={customChecked}
+ *   onChange={setCustomChecked}
+ * />
+ * ```
+ *
+ * @returns {JSX.Element} A styled checkbox input with label and optional description
+ */
 export const Checkbox: React.FC<CheckboxProps> = ({
   label,
   checked,
   onChange,
   disabled = false,
-  className = '',
+  className = "",
   id,
-  description
+  description,
 }) => {
   const inputId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
   const descriptionId = description ? `${inputId}-description` : undefined;
@@ -39,7 +111,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   const labelClasses = `
     ml-3 text-base font-sans text-orange-300 cursor-pointer
-    ${disabled ? 'cursor-not-allowed' : ''}
+    ${disabled ? "cursor-not-allowed" : ""}
   `;
 
   const descriptionClasses = `
@@ -57,7 +129,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         aria-describedby={descriptionId}
         className={checkboxClasses}
       />
-      
+
       <label htmlFor={inputId} className={labelClasses}>
         {label}
       </label>
@@ -69,4 +141,4 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       )}
     </div>
   );
-}; 
+};

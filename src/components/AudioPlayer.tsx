@@ -1,22 +1,78 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  SkipBack,
+  SkipForward,
+} from "lucide-react";
 
+/**
+ * Props for the AudioPlayer component.
+ * @interface AudioPlayerProps
+ */
 interface AudioPlayerProps {
+  /** The source URL of the audio file to play */
   src: string;
+  /** Optional title to display above the audio player */
   title?: string;
+  /** Additional CSS classes to apply to the audio player container */
   className?: string;
+  /** Whether the audio should start playing automatically when loaded */
   autoPlay?: boolean;
+  /** Whether the audio should loop when it reaches the end */
   loop?: boolean;
-  preload?: 'none' | 'metadata' | 'auto';
+  /** How the audio should be preloaded: 'none', 'metadata', or 'auto' */
+  preload?: "none" | "metadata" | "auto";
 }
 
+/**
+ * A comprehensive audio player component with full playback controls and visual feedback.
+ *
+ * The AudioPlayer component provides a complete audio playback experience including:
+ * - Play/pause functionality with visual state indication
+ * - Progress bar with seek capability
+ * - Volume control with mute toggle
+ * - Skip forward/backward buttons (10 seconds)
+ * - Time display showing current position and total duration
+ * - Loading states and accessibility features
+ * - Customizable styling through className prop
+ *
+ * @component
+ * @param {AudioPlayerProps} props - The props for the AudioPlayer component
+ * @param {string} props.src - The source URL of the audio file to play
+ * @param {string} [props.title] - Optional title to display above the audio player
+ * @param {string} [props.className] - Additional CSS classes to apply to the audio player container
+ * @param {boolean} [props.autoPlay=false] - Whether the audio should start playing automatically when loaded
+ * @param {boolean} [props.loop=false] - Whether the audio should loop when it reaches the end
+ * @param {'none' | 'metadata' | 'auto'} [props.preload='metadata'] - How the audio should be preloaded
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <AudioPlayer src="/audio/song.mp3" />
+ *
+ * // With title and custom styling
+ * <AudioPlayer
+ *   src="/audio/podcast.mp3"
+ *   title="Weekly Tech News"
+ *   className="my-custom-class"
+ *   autoPlay={false}
+ *   loop={true}
+ *   preload="auto"
+ * />
+ * ```
+ *
+ * @returns {JSX.Element} A fully functional audio player with controls and visual feedback
+ */
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   src,
   title,
-  className = '',
+  className = "",
   autoPlay = false,
   loop = false,
-  preload = 'metadata',
+  preload = "metadata",
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -37,26 +93,26 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     const handleLoadStart = () => setIsLoading(true);
     const handleCanPlay = () => setIsLoading(false);
 
-    audio.addEventListener('timeupdate', updateTime);
-    audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('loadstart', handleLoadStart);
-    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener("timeupdate", updateTime);
+    audio.addEventListener("loadedmetadata", updateDuration);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("loadstart", handleLoadStart);
+    audio.addEventListener("canplay", handleCanPlay);
 
     return () => {
-      audio.removeEventListener('timeupdate', updateTime);
-      audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('loadstart', handleLoadStart);
-      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener("timeupdate", updateTime);
+      audio.removeEventListener("loadedmetadata", updateDuration);
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("loadstart", handleLoadStart);
+      audio.removeEventListener("canplay", handleCanPlay);
     };
   }, []);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-    
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -103,7 +159,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const baseClasses = `
@@ -135,7 +191,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         loop={loop}
         preload={preload}
       />
-      
+
       {title && (
         <div className="mb-3">
           <h3 className="font-sans font-medium text-orange-300 text-sm truncate">
@@ -173,12 +229,12 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           >
             <SkipBack className="w-4 h-4" />
           </button>
-          
+
           <button
             onClick={togglePlay}
             disabled={isLoading}
             className={`${buttonClasses} p-3`}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
+            aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
               <Pause className="w-5 h-5" />
@@ -186,7 +242,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
               <Play className="w-5 h-5" />
             )}
           </button>
-          
+
           <button
             onClick={skipForward}
             disabled={isLoading}
@@ -203,7 +259,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             onClick={toggleMute}
             disabled={isLoading}
             className={buttonClasses}
-            aria-label={isMuted ? 'Unmute' : 'Mute'}
+            aria-label={isMuted ? "Unmute" : "Mute"}
           >
             {isMuted ? (
               <VolumeX className="w-4 h-4" />
@@ -211,7 +267,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
               <Volume2 className="w-4 h-4" />
             )}
           </button>
-          
+
           <input
             type="range"
             min={0}
@@ -227,4 +283,4 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </div>
     </div>
   );
-}; 
+};

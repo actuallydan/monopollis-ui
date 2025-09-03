@@ -1,27 +1,121 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { Upload, X, File, Image, Video, Music, FileText } from 'lucide-react';
-import { Button } from './Button';
+import React, { useState, useRef, useCallback } from "react";
+import { Upload, X, File, Image, Video, Music, FileText } from "lucide-react";
+import { Button } from "./Button";
 
+/**
+ * Extended File interface with optional preview URL for image files.
+ * @interface FileWithPreview
+ */
 interface FileWithPreview extends File {
+  /** Optional preview URL for image files when preview mode is enabled */
   preview?: string;
 }
 
+/**
+ * Props for the FilePicker component.
+ * @interface FilePickerProps
+ */
 interface FilePickerProps {
+  /** The label text displayed above the file picker */
   label: string;
+  /** Callback function called when files are submitted */
   onFilesSubmit?: (files: FileWithPreview[]) => void;
+  /** Whether multiple files can be selected */
   multiple?: boolean;
+  /** Comma-separated list of accepted file types (e.g., "image/*,.pdf") */
   accept?: string;
+  /** Maximum number of files that can be selected */
   maxFiles?: number;
-  maxSize?: number; // in bytes
+  /** Maximum file size in bytes */
+  maxSize?: number;
+  /** Whether to show image previews for image files */
   preview?: boolean;
+  /** Optional descriptive text displayed below the file picker */
   description?: string;
+  /** Error message to display below the file picker */
   error?: string;
+  /** Whether the file picker is disabled and cannot be interacted with */
   disabled?: boolean;
+  /** Whether the file picker is required (shows required indicator) */
   required?: boolean;
+  /** Additional CSS classes to apply to the file picker container */
   className?: string;
+  /** Unique identifier for the file picker input element */
   id?: string;
 }
 
+/**
+ * A comprehensive file picker component with drag-and-drop support and file validation.
+ *
+ * The FilePicker component provides a user-friendly interface for selecting and uploading files:
+ * - Drag-and-drop file upload with visual feedback
+ * - Click to browse file selection
+ * - File validation (size limits, file types)
+ * - Image preview support for image files
+ * - Multiple file selection support
+ * - File type icons and size information
+ * - Individual file removal
+ * - File submission handling
+ * - Comprehensive error handling and validation
+ * - Accessibility features and ARIA attributes
+ * - Responsive design with proper focus management
+ *
+ * @component
+ * @param {FilePickerProps} props - The props for the FilePicker component
+ * @param {string} props.label - The label text displayed above the file picker
+ * @param {(files: FileWithPreview[]) => void} [props.onFilesSubmit] - Callback function called when files are submitted
+ * @param {boolean} [props.multiple=false] - Whether multiple files can be selected
+ * @param {string} [props.accept] - Comma-separated list of accepted file types
+ * @param {number} [props.maxFiles=10] - Maximum number of files that can be selected
+ * @param {number} [props.maxSize] - Maximum file size in bytes
+ * @param {boolean} [props.preview=false] - Whether to show image previews for image files
+ * @param {string} [props.description] - Optional descriptive text displayed below the file picker
+ * @param {string} [props.error] - Error message to display below the file picker
+ * @param {boolean} [props.disabled=false] - Whether the file picker is disabled
+ * @param {boolean} [props.required=false] - Whether the file picker is required
+ * @param {string} [props.className] - Additional CSS classes to apply to the container
+ * @param {string} [props.id] - Unique identifier for the file picker input
+ *
+ * @example
+ * ```tsx
+ * // Basic single file picker
+ * <FilePicker
+ *   label="Upload Document"
+ *   onFilesSubmit={(files) => console.log('Files:', files)}
+ * />
+ *
+ * // Multiple file picker with restrictions
+ * <FilePicker
+ *   label="Upload Images"
+ *   multiple={true}
+ *   accept="image/*"
+ *   maxFiles={5}
+ *   maxSize={5 * 1024 * 1024} // 5MB
+ *   preview={true}
+ *   onFilesSubmit={handleImageUpload}
+ * />
+ *
+ * // File picker with validation and description
+ * <FilePicker
+ *   label="Upload PDF Files"
+ *   accept=".pdf,.doc,.docx"
+ *   maxSize={10 * 1024 * 1024} // 10MB
+ *   description="Please upload PDF, Word, or text documents only"
+ *   required={true}
+ *   error={fileError}
+ *   onFilesSubmit={handleDocumentUpload}
+ * />
+ *
+ * // Disabled state
+ * <FilePicker
+ *   label="Upload Files"
+ *   disabled={true}
+ *   description="File upload is currently unavailable"
+ * />
+ * ```
+ *
+ * @returns {JSX.Element} A file picker component with drag-and-drop support and file management
+ */
 export const FilePicker: React.FC<FilePickerProps> = ({
   label,
   onFilesSubmit,
@@ -34,7 +128,7 @@ export const FilePicker: React.FC<FilePickerProps> = ({
   error,
   disabled = false,
   required = false,
-  className = '',
+  className = "",
   id,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -43,59 +137,71 @@ export const FilePicker: React.FC<FilePickerProps> = ({
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filePickerId = id || `filepicker-${Math.random().toString(36).substr(2, 9)}`;
+  const filePickerId =
+    id || `filepicker-${Math.random().toString(36).substr(2, 9)}`;
   const descriptionId = description ? `${filePickerId}-description` : undefined;
   const errorId = error ? `${filePickerId}-error` : undefined;
 
   const validateFile = (file: File): string | null => {
     if (maxSize && file.size > maxSize) {
-      return `File ${file.name} is too large. Maximum size is ${formatFileSize(maxSize)}.`;
+      return `File ${file.name} is too large. Maximum size is ${formatFileSize(
+        maxSize
+      )}.`;
     }
     return null;
   };
 
-  const processFiles = useCallback((files: FileList | File[]): FileWithPreview[] => {
-    const fileArray = Array.from(files);
-    const validFiles: FileWithPreview[] = [];
-    const errors: string[] = [];
+  const processFiles = useCallback(
+    (files: FileList | File[]): FileWithPreview[] => {
+      const fileArray = Array.from(files);
+      const validFiles: FileWithPreview[] = [];
+      const errors: string[] = [];
 
-    fileArray.forEach((file) => {
-      const error = validateFile(file);
-      if (error) {
-        errors.push(error);
-        return;
+      fileArray.forEach((file) => {
+        const error = validateFile(file);
+        if (error) {
+          errors.push(error);
+          return;
+        }
+
+        const fileWithPreview: FileWithPreview = file;
+
+        if (preview && file.type.startsWith("image/")) {
+          fileWithPreview.preview = URL.createObjectURL(file);
+        }
+
+        validFiles.push(fileWithPreview);
+      });
+
+      if (errors.length > 0) {
+        setValidationErrors(errors);
+      } else {
+        setValidationErrors([]);
       }
 
-      const fileWithPreview: FileWithPreview = file;
-      
-      if (preview && file.type.startsWith('image/')) {
-        fileWithPreview.preview = URL.createObjectURL(file);
+      return validFiles;
+    },
+    [maxSize, preview]
+  );
+
+  const handleFileSelect = useCallback(
+    (files: FileList | File[]) => {
+      if (disabled) return;
+
+      const newFiles = processFiles(files);
+
+      if (multiple) {
+        const combinedFiles = [...selectedFiles, ...newFiles].slice(
+          0,
+          maxFiles
+        );
+        setSelectedFiles(combinedFiles);
+      } else {
+        setSelectedFiles(newFiles.slice(0, 1));
       }
-
-      validFiles.push(fileWithPreview);
-    });
-
-    if (errors.length > 0) {
-      setValidationErrors(errors);
-    } else {
-      setValidationErrors([]);
-    }
-
-    return validFiles;
-  }, [maxSize, preview]);
-
-  const handleFileSelect = useCallback((files: FileList | File[]) => {
-    if (disabled) return;
-
-    const newFiles = processFiles(files);
-    
-    if (multiple) {
-      const combinedFiles = [...selectedFiles, ...newFiles].slice(0, maxFiles);
-      setSelectedFiles(combinedFiles);
-    } else {
-      setSelectedFiles(newFiles.slice(0, 1));
-    }
-  }, [selectedFiles, multiple, maxFiles, disabled, processFiles]);
+    },
+    [selectedFiles, multiple, maxFiles, disabled, processFiles]
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -107,14 +213,14 @@ export const FilePicker: React.FC<FilePickerProps> = ({
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragCounter(prev => prev + 1);
+    setDragCounter((prev) => prev + 1);
     setIsDragOver(true);
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragCounter(prev => {
+    setDragCounter((prev) => {
       const newCounter = prev - 1;
       if (newCounter <= 0) {
         setIsDragOver(false);
@@ -128,26 +234,29 @@ export const FilePicker: React.FC<FilePickerProps> = ({
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-    setDragCounter(0);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(false);
+      setDragCounter(0);
 
-    if (disabled) return;
+      if (disabled) return;
 
-    const files = e.dataTransfer.files;
-    if (files) {
-      handleFileSelect(files);
-    }
-  }, [disabled, handleFileSelect]);
+      const files = e.dataTransfer.files;
+      if (files) {
+        handleFileSelect(files);
+      }
+    },
+    [disabled, handleFileSelect]
+  );
 
   const removeFile = (index: number) => {
     const file = selectedFiles[index];
     if (file.preview) {
       URL.revokeObjectURL(file.preview);
     }
-    
+
     const newFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(newFiles);
   };
@@ -159,18 +268,19 @@ export const FilePicker: React.FC<FilePickerProps> = ({
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const getFileIcon = (file: File) => {
-    if (file.type.startsWith('image/')) return Image;
-    if (file.type.startsWith('video/')) return Video;
-    if (file.type.startsWith('audio/')) return Music;
-    if (file.type.includes('text') || file.type.includes('document')) return FileText;
+    if (file.type.startsWith("image/")) return Image;
+    if (file.type.startsWith("video/")) return Video;
+    if (file.type.startsWith("audio/")) return Music;
+    if (file.type.includes("text") || file.type.includes("document"))
+      return FileText;
     return File;
   };
 
@@ -193,21 +303,26 @@ export const FilePicker: React.FC<FilePickerProps> = ({
   const dropzoneClasses = `
     w-full p-8 border-2 border-dashed rounded-md text-center transition-all duration-200
     font-sans text-base
-    ${isDragOver
-      ? 'border-orange-300 bg-orange-300/10'
-      : 'border-orange-300/50 hover:border-orange-300/80 hover:bg-orange-300/5'
+    ${
+      isDragOver
+        ? "border-orange-300 bg-orange-300/10"
+        : "border-orange-300/50 hover:border-orange-300/80 hover:bg-orange-300/5"
     }
-    ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-    ${error ? 'border-red-400' : ''}
+    ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+    ${error ? "border-red-400" : ""}
   `;
 
   return (
     <div className={`${baseClasses} ${className}`}>
       <label htmlFor={filePickerId} className={labelClasses}>
         {label}
-        {required && <span className="text-red-400 ml-1" aria-label="required">*</span>}
+        {required && (
+          <span className="text-red-400 ml-1" aria-label="required">
+            *
+          </span>
+        )}
       </label>
-      
+
       <div
         className={dropzoneClasses}
         onDragEnter={handleDragEnter}
@@ -217,7 +332,9 @@ export const FilePicker: React.FC<FilePickerProps> = ({
         onClick={() => !disabled && fileInputRef.current?.click()}
         role="button"
         tabIndex={disabled ? -1 : 0}
-        aria-describedby={[descriptionId, errorId].filter(Boolean).join(' ') || undefined}
+        aria-describedby={
+          [descriptionId, errorId].filter(Boolean).join(" ") || undefined
+        }
         aria-invalid={!!error}
       >
         <input
@@ -231,13 +348,13 @@ export const FilePicker: React.FC<FilePickerProps> = ({
           disabled={disabled}
           required={required}
         />
-        
+
         <Upload className="w-8 h-8 text-orange-300 mx-auto mb-2" />
         <p className="text-orange-300 font-medium mb-1">
-          {isDragOver ? 'Drop files here' : 'Click to upload or drag and drop'}
+          {isDragOver ? "Drop files here" : "Click to upload or drag and drop"}
         </p>
         <p className="text-orange-300/80 text-sm">
-          {multiple ? 'Multiple files allowed' : 'Single file only'}
+          {multiple ? "Multiple files allowed" : "Single file only"}
           {accept && ` • ${accept}`}
           {maxSize && ` • Max ${formatFileSize(maxSize)}`}
         </p>
@@ -257,7 +374,7 @@ export const FilePicker: React.FC<FilePickerProps> = ({
                   key={`${file.name}-${index}`}
                   className="flex items-center gap-3 p-3 border border-orange-300/30 rounded-md bg-black"
                 >
-                  {preview && file.preview && file.type.startsWith('image/') ? (
+                  {preview && file.preview && file.type.startsWith("image/") ? (
                     <img
                       src={file.preview}
                       alt={file.name}
@@ -266,7 +383,7 @@ export const FilePicker: React.FC<FilePickerProps> = ({
                   ) : (
                     <FileIcon className="w-12 h-12 text-orange-300/80" />
                   )}
-                  
+
                   <div className="flex-1 min-w-0">
                     <p className="font-sans text-orange-300 text-sm truncate">
                       {file.name}
@@ -275,7 +392,7 @@ export const FilePicker: React.FC<FilePickerProps> = ({
                       {formatFileSize(file.size)}
                     </p>
                   </div>
-                  
+
                   <Button
                     onClick={() => removeFile(index)}
                     variant="secondary"
@@ -288,7 +405,7 @@ export const FilePicker: React.FC<FilePickerProps> = ({
               );
             })}
           </div>
-          
+
           {/* Submit Button */}
           <Button
             onClick={handleSubmit}
@@ -304,8 +421,16 @@ export const FilePicker: React.FC<FilePickerProps> = ({
       {validationErrors.length > 0 && (
         <div className="mt-4 p-3 bg-yellow-400/20 border border-yellow-400/50 rounded-md">
           <div className="flex items-start gap-2">
-            <svg className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            <svg
+              className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                clipRule="evenodd"
+              />
             </svg>
             <div className="text-yellow-400 text-sm">
               <p className="font-medium mb-1">File validation errors:</p>
@@ -332,4 +457,4 @@ export const FilePicker: React.FC<FilePickerProps> = ({
       )}
     </div>
   );
-}; 
+};
