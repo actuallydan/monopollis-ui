@@ -2,7 +2,7 @@
 
 A modern React component library built with TypeScript, Vite, and Tailwind CSS. This library provides a comprehensive set of accessible, customizable UI components designed for building beautiful web applications.
 
-![short demo video](/assets/example.mp4)
+[![short demo video](/assets/example.mp4)](https://github.com/user-attachments/assets/1948c2fc-079b-488a-ad6b-43fa9471d7a2)
 
 ## 🚀 Features
 
