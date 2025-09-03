@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { FilePicker, Card, Header, Paragraph, Divider } from "../components";
+import { FilePicker, Card, Paragraph, Divider } from "../components";
 
 export default function FilePickerShowcase() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [submittedFiles, setSubmittedFiles] = useState<File[]>([]);
 
   return (

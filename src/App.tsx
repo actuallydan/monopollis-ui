@@ -1,20 +1,12 @@
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   useNavigate,
   useLocation,
 } from "react-router-dom";
 import { TreeView, type TreeNode } from "./components";
-import {
-  Folder,
-  Code,
-  FileText,
-  Image,
-  Music,
-  Video,
-  File,
-} from "lucide-react";
+import { Folder, Code, FileText, Music, File } from "lucide-react";
 
 // Component showcase pages
 import ButtonShowcase from "./showcase/ButtonShowcase";
@@ -218,7 +210,7 @@ function ComponentShowcase() {
 
         <TreeView
           data={componentTree}
-          maxHeight="calc(100vh - 120px)"
+          maxHeight={window.innerHeight - 120}
           getNodeIcon={getComponentIcon}
           onNodeClick={handleNodeClick}
           onNodeAction={handleNodeAction}

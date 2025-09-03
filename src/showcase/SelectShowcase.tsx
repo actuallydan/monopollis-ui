@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Select, Card, Header, Paragraph } from "../components";
+import { Select, Card, Paragraph } from "../components";
 
 export default function SelectShowcase() {
   const [selectValue, setSelectValue] = useState("");

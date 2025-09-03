@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DateRangePicker, Card, Header, Paragraph } from "../components";
+import { DateRangePicker, Card, Paragraph } from "../components";
 
 export default function DateRangePickerShowcase() {
   const [dateRange, setDateRange] = useState<{

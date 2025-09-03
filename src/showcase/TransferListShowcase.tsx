@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TransferList, Card, Header, Paragraph } from "../components";
+import { TransferList, Card, Paragraph } from "../components";
 
 export default function TransferListShowcase() {
   const [transferLeftItems, setTransferLeftItems] = useState([

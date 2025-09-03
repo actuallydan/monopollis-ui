@@ -1,4 +1,4 @@
-import { LoadingSpinner, Card, Header, Paragraph } from "../components";
+import { LoadingSpinner, Card, Paragraph } from "../components";
 
 export default function LoadingSpinnerShowcase() {
   return (

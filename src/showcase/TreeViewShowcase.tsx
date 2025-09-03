@@ -1,10 +1,4 @@
-import {
-  TreeView,
-  Card,
-  Header,
-  Paragraph,
-  type TreeNode,
-} from "../components";
+import { TreeView, Card, Paragraph, type TreeNode } from "../components";
 import {
   Folder,
   Code,

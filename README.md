@@ -1,454 +1,124 @@
-# Monopollis UI Component Library
+# Monopollis UI - Component Library
 
-A modern React component library built with TypeScript, Vite, and Tailwind CSS. This library provides a comprehensive set of accessible, customizable UI components designed for building beautiful web applications.
+A comprehensive monochromatic terminal-style UI component library built with React, TypeScript, and Tailwind CSS.
 
-[![short demo video](/assets/example.mp4)](https://github.com/user-attachments/assets/1948c2fc-079b-488a-ad6b-43fa9471d7a2)
+## Features
 
-## 🚀 Features
+- 🎨 **Monochromatic Terminal Theme**: Consistent black and orange color scheme
+- 🧩 **30+ Components**: From basic buttons to complex data tables
+- 📱 **Fully Responsive**: Works on all device sizes
+- ♿ **Accessible**: Built with accessibility in mind
+- 🔧 **TypeScript**: Full type safety and IntelliSense support
+- 🎯 **Interactive Showcase**: Live examples of all components
 
-- **Modern React**: Built with React 19 and TypeScript
-- **Tailwind CSS**: Utility-first CSS framework for rapid UI development
-- **Accessible**: Components follow ARIA best practices
-- **TypeScript**: Full type safety and IntelliSense support
-- **Customizable**: Easy to theme and extend
-- **Responsive**: Mobile-first design approach
+## Component Categories
 
-## 📦 Installation
+- **Buttons**: Basic, Icons, Loading, Icon Buttons
+- **Form Inputs**: Text Input, Textarea, Select, Checkbox, Switch, Radio, Range Slider, Input OTP
+- **Data Display**: Badge, Table, TreeView, Timeline, Transfer List
+- **Navigation**: Breadcrumbs, Terminal Menu
+- **Media**: Audio Player, File Picker
+- **Date & Time**: Date Picker, Date Range Picker
+- **Feedback**: Loading Spinner, Clipboard, Chat Input
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/dankral/monopollis-ui.git
 cd monopollis-ui
 
 # Install dependencies
 npm install
-# or
-bun install
 
 # Start development server
 npm run dev
-# or
-bun dev
 ```
 
-## 🧩 Available Components
+The app will be available at `http://localhost:3000`
 
-### Form Components
+### Building
 
-#### Button
+```bash
+# Build for production
+npm run build
 
-A versatile button component with multiple variants and states.
-
-```tsx
-import { Button } from './components';
-
-<Button variant="primary" onClick={() => console.log('clicked')}>
-  Click me
-</Button>
-
-<Button variant="secondary" disabled>
-  Disabled Button
-</Button>
-
-<Button isLoading loadingText="Saving...">
-  Save
-</Button>
+# Preview production build
+npm run preview
 ```
 
-**Props:**
+## Deployment
 
-- `variant`: 'primary' | 'secondary'
-- `disabled`: boolean
-- `isLoading`: boolean
-- `loadingText`: string
-- `icon`: ReactNode | LucideIcon
-- `type`: 'button' | 'submit' | 'reset'
+### GitHub Pages (Recommended)
 
-#### TextInput
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
 
-Standard text input field with customizable styling.
+#### Setup Steps:
 
-```tsx
-import { TextInput } from "./components";
+1. **Enable GitHub Pages** in your repository settings:
 
-<TextInput placeholder="Enter your name" label="Name" required />;
+   - Go to Settings → Pages
+   - Source: "GitHub Actions"
+
+2. **Push to main branch**: The GitHub Action will automatically build and deploy your app
+
+3. **Your app will be available at**: `https://dankral.github.io/monopollis-ui`
+
+#### Manual Deployment
+
+If you prefer manual deployment:
+
+```bash
+# Build and deploy to GitHub Pages
+npm run deploy
 ```
 
-#### Textarea
+### Other Platforms
 
-Multi-line text input component.
+You can deploy the built `dist` folder to any static hosting service:
 
-```tsx
-import { Textarea } from "./components";
+- **Netlify**: Drag and drop the `dist` folder
+- **Vercel**: Connect your repository for automatic deployment
+- **AWS S3**: Upload the `dist` folder to an S3 bucket
+- **Firebase Hosting**: Use `firebase deploy`
 
-<Textarea placeholder="Enter your message" rows={4} maxLength={500} />;
-```
-
-#### Checkbox
-
-Accessible checkbox component.
-
-```tsx
-import { Checkbox } from "./components";
-
-<Checkbox
-  checked={isChecked}
-  onChange={setIsChecked}
-  label="Accept terms and conditions"
-/>;
-```
-
-#### Switch
-
-Toggle switch component.
-
-```tsx
-import { Switch } from "./components";
-
-<Switch
-  checked={isEnabled}
-  onChange={setIsEnabled}
-  label="Enable notifications"
-/>;
-```
-
-#### Radio
-
-Radio button group component.
-
-```tsx
-import { Radio } from "./components";
-
-<Radio
-  name="size"
-  value="large"
-  checked={selectedSize === "large"}
-  onChange={(value) => setSelectedSize(value)}
-  label="Large"
-/>;
-```
-
-#### Select
-
-Dropdown select component.
-
-```tsx
-import { Select } from "./components";
-
-<Select
-  options={[
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-  ]}
-  value={selectedValue}
-  onChange={setSelectedValue}
-  placeholder="Choose an option"
-/>;
-```
-
-#### DatePicker & DateRangePicker
-
-Date selection components with calendar interface.
-
-```tsx
-import { DatePicker, DateRangePicker } from './components';
-
-<DatePicker
-  value={selectedDate}
-  onChange={setSelectedDate}
-  placeholder="Select date"
-/>
-
-<DateRangePicker
-  startDate={startDate}
-  endDate={endDate}
-  onChange={({ startDate, endDate }) => {
-    setStartDate(startDate);
-    setEndDate(endDate);
-  }}
-/>
-```
-
-#### InputOtp
-
-One-time password input component.
-
-```tsx
-import { InputOtp } from "./components";
-
-<InputOtp length={6} value={otp} onChange={setOtp} />;
-```
-
-### Layout Components
-
-#### Card
-
-Container component for grouping related content.
-
-```tsx
-import { Card } from "./components";
-
-<Card title="User Profile" variant="bordered">
-  <p>Card content goes here</p>
-</Card>;
-```
-
-**Props:**
-
-- `title`: string (optional)
-- `variant`: 'default' | 'bordered'
-
-#### Header
-
-Typography component for headings.
-
-```tsx
-import { Header } from './components';
-
-<Header size="lg">Main Heading</Header>
-<Header size="md">Section Title</Header>
-<Header size="sm">Subtitle</Header>
-```
-
-#### Paragraph
-
-Text component for body content.
-
-```tsx
-import { Paragraph } from "./components";
-
-<Paragraph>This is a paragraph of text.</Paragraph>;
-```
-
-#### Divider
-
-Visual separator component.
-
-```tsx
-import { Divider } from "./components";
-
-<Divider />;
-```
-
-### Data Display Components
-
-#### Table
-
-Data table component with sorting and pagination.
-
-```tsx
-import { Table } from "./components";
-
-<Table data={tableData} columns={columns} sortable pagination />;
-```
-
-#### TreeView
-
-Hierarchical data display component.
-
-```tsx
-import { TreeView } from "./components";
-
-<TreeView data={treeData} onNodeSelect={handleNodeSelect} />;
-```
-
-#### Timeline
-
-Chronological event display component.
-
-```tsx
-import { Timeline } from "./components";
-
-<Timeline items={timelineItems} variant="vertical" />;
-```
-
-#### Badge
-
-Small status indicator component.
-
-```tsx
-import { Badge } from './components';
-
-<Badge variant="success">Active</Badge>
-<Badge variant="warning">Pending</Badge>
-<Badge variant="error">Error</Badge>
-```
-
-### Navigation Components
-
-#### Breadcrumbs
-
-Navigation breadcrumb component.
-
-```tsx
-import { Breadcrumbs } from "./components";
-
-<Breadcrumbs
-  items={[
-    { label: "Home", href: "/" },
-    { label: "Products", href: "/products" },
-    { label: "Current Page" },
-  ]}
-/>;
-```
-
-#### TerminalMenu
-
-Terminal-style navigation menu.
-
-```tsx
-import { TerminalMenu } from "./components";
-
-<TerminalMenu items={menuItems} onItemSelect={handleItemSelect} />;
-```
-
-### Media Components
-
-#### AudioPlayer
-
-Full-featured audio player component.
-
-```tsx
-import { AudioPlayer } from "./components";
-
-<AudioPlayer src="/audio/file.mp3" title="Audio Title" showControls />;
-```
-
-#### InlineAudioPlayer
-
-Compact inline audio player.
-
-```tsx
-import { InlineAudioPlayer } from "./components";
-
-<InlineAudioPlayer src="/audio/file.mp3" autoPlay={false} />;
-```
-
-### Utility Components
-
-#### LoadingSpinner
-
-Loading indicator component.
-
-```tsx
-import { LoadingSpinner } from './components';
-
-<LoadingSpinner size="lg" />
-<LoadingSpinner size="md" />
-<LoadingSpinner size="sm" />
-```
-
-#### Clipboard
-
-Copy-to-clipboard functionality component.
-
-```tsx
-import { Clipboard } from "./components";
-
-<Clipboard text="Text to copy" onCopy={() => console.log("Copied!")}>
-  Copy Text
-</Clipboard>;
-```
-
-#### FilePicker
-
-File selection component.
-
-```tsx
-import { FilePicker } from "./components";
-
-<FilePicker accept=".pdf,.doc,.docx" multiple onFileSelect={handleFileSelect}>
-  Choose Files
-</FilePicker>;
-```
-
-#### ChatInput
-
-Chat message input component.
-
-```tsx
-import { ChatInput } from "./components";
-
-<ChatInput
-  placeholder="Type your message..."
-  onSend={handleSendMessage}
-  showEmojiPicker
-/>;
-```
-
-#### TransferList
-
-Dual-list transfer component.
-
-```tsx
-import { TransferList } from "./components";
-
-<TransferList
-  leftItems={leftItems}
-  rightItems={rightItems}
-  onTransfer={handleTransfer}
-/>;
-```
-
-#### RangeSlider
-
-Range selection slider component.
-
-```tsx
-import { RangeSlider } from "./components";
-
-<RangeSlider min={0} max={100} value={[25, 75]} onChange={setValue} step={5} />;
-```
-
-## 🎨 Styling
-
-The component library uses Tailwind CSS for styling. You can customize the appearance by:
-
-1. Modifying the Tailwind configuration in `tailwind.config.js`
-2. Overriding component styles using the `className` prop
-3. Creating custom CSS variables for theme colors
-
-## 🔧 Development
-
-### Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build
-
-### Project Structure
+## Project Structure
 
 ```
 src/
-├── components/          # Component library
-│   ├── index.ts        # Component exports
-│   ├── Button.tsx      # Button component
-│   ├── Card.tsx        # Card component
-│   └── ...             # Other components
-├── App.tsx             # Main application
-├── main.tsx            # Application entry point
-└── index.css           # Global styles
+├── components/          # All UI components
+├── showcase/           # Component showcase pages
+├── App.tsx            # Main app with routing
+└── main.tsx           # Entry point
+
+.github/workflows/      # GitHub Actions for deployment
 ```
 
-## 📚 Dependencies
+## Development
 
-### Core Dependencies
+### Adding New Components
 
-- **React 19** - UI library
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling framework
-- **Vite** - Build tool
+1. Create your component in `src/components/`
+2. Export it from `src/components/index.ts`
+3. Create a showcase page in `src/showcase/`
+4. Add the route to `src/App.tsx`
 
-### Component Dependencies
+### Styling
 
-- **@react-aria** - Accessibility primitives
-- **@react-stately** - State management
-- **@tanstack/react-table** - Table functionality
-- **lucide-react** - Icon library
-- **@internationalized/date** - Date handling
+This project uses Tailwind CSS v4 with a custom monochromatic theme. All components follow the terminal aesthetic with:
 
-## 🤝 Contributing
+- Background: Black (`bg-black`)
+- Text: Orange (`text-orange-300`)
+- Borders: Orange with transparency (`border-orange-300/30`)
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -456,10 +126,10 @@ src/
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
+## License
 
-This project is private and proprietary.
+This project is open source and available under the [MIT License](LICENSE).
 
-## 🆘 Support
+## Live Demo
 
-For questions or issues, please open an issue in the repository or contact the development team.
+Visit the live component showcase: [https://dankral.github.io/monopollis-ui](https://dankral.github.io/monopollis-ui)

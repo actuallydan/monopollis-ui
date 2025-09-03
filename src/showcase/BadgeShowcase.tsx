@@ -1,4 +1,4 @@
-import { Badge, Card, Header, Paragraph, Divider } from "../components";
+import { Badge, Card, Header, Divider } from "../components";
 
 export default function BadgeShowcase() {
   return (

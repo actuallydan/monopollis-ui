@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Textarea, Card, Header, Paragraph } from "../components";
+import { Textarea, Card, Paragraph } from "../components";
 
 export default function TextareaShowcase() {
   const [textareaValue, setTextareaValue] = useState("");

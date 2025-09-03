@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DatePicker, Card, Header, Paragraph } from "../components";
+import { DatePicker, Card, Paragraph } from "../components";
 
 export default function DatePickerShowcase() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);

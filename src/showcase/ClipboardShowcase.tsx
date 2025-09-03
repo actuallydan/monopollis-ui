@@ -1,4 +1,4 @@
-import { Clipboard, Card, Header, Paragraph } from "../components";
+import { Clipboard, Card, Paragraph } from "../components";
 
 export default function ClipboardShowcase() {
   return (

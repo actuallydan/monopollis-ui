@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChatInput, Card, Header, Paragraph, Divider } from "../components";
+import { ChatInput, Card, Paragraph, Divider } from "../components";
 import { FileIcon } from "lucide-react";
 import type { Attachment } from "../components/ChatInput";
 

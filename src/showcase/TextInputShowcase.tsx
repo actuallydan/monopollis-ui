@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, Card, Header, Paragraph, Divider } from "../components";
+import { TextInput, Card } from "../components";
 
 export default function TextInputShowcase() {
   const [inputValue, setInputValue] = useState("");

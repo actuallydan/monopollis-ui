@@ -1,5 +1,4 @@
-import { createColumnHelper, type ColumnDef } from "@tanstack/react-table";
-import { Table, Badge, Card, Header, Paragraph } from "../components";
+import { Table, Badge, Card, Paragraph } from "../components";
 
 export default function TableShowcase() {
   // Sample table data
@@ -39,66 +38,33 @@ export default function TableShowcase() {
       status: "Inactive",
       category: "Chem",
     },
-    {
-      id: "6",
-      name: "OTE 007",
-      value: 1105,
-      status: "Active",
-      category: "Chem",
-    },
-    {
-      id: "7",
-      name: "OTE 008",
-      value: 234,
-      status: "Active",
-      category: "Main Grp",
-    },
-    {
-      id: "8",
-      name: "OTE 009",
-      value: 567,
-      status: "Inactive",
-      category: "Periods",
-    },
-    {
-      id: "9",
-      name: "OTE 010",
-      value: 890,
-      status: "Active",
-      category: "Chem",
-    },
-    {
-      id: "10",
-      name: "OTE 011",
-      value: 123,
-      status: "Active",
-      category: "Main Grp",
-    },
   ];
 
-  const columnHelper = createColumnHelper<(typeof tableData)[0]>();
-
-  const tableColumns: ColumnDef<(typeof tableData)[0]>[] = [
-    columnHelper.accessor("name", {
+  const tableColumns = [
+    {
+      accessorKey: "name",
       header: "Name",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("value", {
+      cell: (info: any) => info.getValue(),
+    },
+    {
+      accessorKey: "value",
       header: "Value",
-      cell: (info) => info.getValue(),
-    }),
-    columnHelper.accessor("status", {
+      cell: (info: any) => info.getValue(),
+    },
+    {
+      accessorKey: "status",
       header: "Status",
-      cell: (info) => (
+      cell: (info: any) => (
         <Badge variant={info.getValue() === "Active" ? "success" : "warning"}>
           {info.getValue()}
         </Badge>
       ),
-    }),
-    columnHelper.accessor("category", {
+    },
+    {
+      accessorKey: "category",
       header: "Category",
-      cell: (info) => info.getValue(),
-    }),
+      cell: (info: any) => info.getValue(),
+    },
   ];
 
   return (
@@ -112,9 +78,7 @@ export default function TableShowcase() {
 
           <Table
             data={tableData}
-            columns={
-              tableColumns as unknown as ColumnDef<(typeof tableData)[0]>[]
-            }
+            columns={tableColumns as any}
             maxHeight={400}
             enableSorting={true}
             enablePagination={true}

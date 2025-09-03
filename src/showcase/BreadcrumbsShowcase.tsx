@@ -1,4 +1,4 @@
-import { Breadcrumbs, Card, Header, Paragraph, Divider } from "../components";
+import { Breadcrumbs, Card, Paragraph, Divider } from "../components";
 
 export default function BreadcrumbsShowcase() {
   return (

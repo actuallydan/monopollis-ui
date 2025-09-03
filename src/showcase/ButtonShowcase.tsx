@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-  Button,
-  IconButton,
-  Card,
-  Header,
-  Paragraph,
-  Divider,
-} from "../components";
+import { Button, IconButton, Card, Header, Divider } from "../components";
 import { Zap, Settings, Download, Upload, Edit, Trash2 } from "lucide-react";
 
 export default function ButtonShowcase() {
