@@ -26,5 +26,4 @@ export { FilePicker } from './FilePicker';
 export { ChatInput } from './ChatInput';
 export { Timeline, type TimelineItem, type TimelineItemStatus } from './Timeline';
 export { InputOtp } from './InputOtp';
-export { WorldMap, type WorldMapLocation } from './WorldMap';
 export { TerminalMenu, type TerminalMenuItem } from './TerminalMenu'; 

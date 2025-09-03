@@ -29,7 +29,6 @@ import {
   ChatInput,
   Timeline,
   InputOtp,
-  WorldMap,
   TerminalMenu,
   type TreeNode
 } from './components'
@@ -956,80 +955,6 @@ function App() {
                   disabled={true}
                 />
               </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* World Map Component */}
-        <Card title="World Map Component" variant="bordered">
-          <div className="space-y-6">
-            <Paragraph size="sm">
-              Responsive world map with clickable locations, inspired by Grommet's WorldMap but customized for the monochromatic terminal theme.
-            </Paragraph>
-            
-            <div className="space-y-4">
-              <div className="h-96">
-                <WorldMap
-                  locations={[
-                    {
-                      id: 'nyc',
-                      name: 'New York City',
-                      lat: 40.7128,
-                      lng: -74.0060,
-                      color: 'rgb(251, 146, 60)',
-                      size: 12,
-                      onClick: () => setSelectedLocation('New York City'),
-                    },
-                    {
-                      id: 'london',
-                      name: 'London',
-                      lat: 51.5074,
-                      lng: -0.1278,
-                      color: 'rgb(34, 197, 94)',
-                      size: 10,
-                      onClick: () => setSelectedLocation('London'),
-                    },
-                    {
-                      id: 'tokyo',
-                      name: 'Tokyo',
-                      lat: 35.6762,
-                      lng: 139.6503,
-                      color: 'rgb(239, 68, 68)',
-                      size: 11,
-                      onClick: () => setSelectedLocation('Tokyo'),
-                    },
-                    {
-                      id: 'sydney',
-                      name: 'Sydney',
-                      lat: -33.8688,
-                      lng: 151.2093,
-                      color: 'rgb(168, 85, 247)',
-                      size: 9,
-                      onClick: () => setSelectedLocation('Sydney'),
-                    },
-                    {
-                      id: 'cairo',
-                      name: 'Cairo',
-                      lat: 30.0444,
-                      lng: 31.2357,
-                      color: 'rgb(251, 191, 36)',
-                      size: 8,
-                      onClick: () => setSelectedLocation('Cairo'),
-                    },
-                  ]}
-                  onLocationClick={(location) => setSelectedLocation(location.name)}
-                  responsive={true}
-                  className="w-full h-full"
-                />
-              </div>
-              
-              {selectedLocation && (
-                <div className="p-3 border border-orange-300/30 rounded-md bg-black">
-                  <Paragraph size="sm">
-                    Selected: <span className="font-medium text-orange-300">{selectedLocation}</span>
-                  </Paragraph>
-                </div>
-              )}
             </div>
           </div>
         </Card>
