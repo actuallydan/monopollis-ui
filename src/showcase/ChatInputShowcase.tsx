@@ -184,7 +184,7 @@ export default function ChatInputShowcase() {
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-black overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b-2 border-orange-300/20 flex-shrink-0">
-        <h1 className="text-2xl font-bold text-orange-300"># general <span className="text-orange-300/50 text-sm">files are not uploaded to any server</span></h1>
+        <h1 className="text-2xl font-bold text-orange-300"># general <span className="text-orange-300/80 text-sm">files are not uploaded to any server</span></h1>
       </div>
 
       {/* Messages - takes up all remaining space */}

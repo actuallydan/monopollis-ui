@@ -6,7 +6,7 @@ import { Button } from "./Button";
  * Extended File interface with optional preview URL for image files.
  * @interface FileWithPreview
  */
-interface FileWithPreview extends File {
+export interface FileWithPreview extends File {
   /** Optional preview URL for image files when preview mode is enabled */
   preview?: string;
 }
