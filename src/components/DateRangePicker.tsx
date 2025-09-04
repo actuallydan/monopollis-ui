@@ -127,6 +127,9 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   const [currentMonth, setCurrentMonth] = useState<CalendarDate>(
     startDate || today(getLocalTimeZone())
   );
+  const [secondMonth, setSecondMonth] = useState<CalendarDate>(
+    startDate ? startDate.add({ months: 1 }) : today(getLocalTimeZone()).add({ months: 1 })
+  );
   const [isClicking, setIsClicking] = useState(false);
 
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -166,6 +169,14 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
     setCurrentMonth(currentMonth.add({ months: 1 }));
   };
 
+  const handleSecondPreviousMonth = () => {
+    setSecondMonth(secondMonth.subtract({ months: 1 }));
+  };
+
+  const handleSecondNextMonth = () => {
+    setSecondMonth(secondMonth.add({ months: 1 }));
+  };
+
   const { overlayProps } = useOverlay(
     {
       isOpen,
@@ -185,19 +196,25 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
     absolute top-full left-0 right-0 z-50 mt-1
     bg-black border-2 border-orange-300/50 rounded-md
     shadow-lg p-4
+    max-w-full overflow-x-auto
   `;
 
   const dateRangePickerId =
-    id || `daterangepicker-${Math.random().toString(36).substr(2, 9)}`;
+    id || `daterangepicker-${Math.random().toString(36).substring(2, 9)}`;
   const descriptionId = description
     ? `${dateRangePickerId}-description`
     : undefined;
   const errorId = error ? `${dateRangePickerId}-error` : undefined;
 
   const formatRange = () => {
-    if (!startDate) return "";
-    if (!endDate)
-      return startDate.toDate(getLocalTimeZone()).toLocaleDateString();
+    if (!startDate) {
+      return "";
+    }
+
+    if (!endDate){
+      return startDate.toDate(getLocalTimeZone()).toLocaleDateString()
+    }
+    
     return `${startDate
       .toDate(getLocalTimeZone())
       .toLocaleDateString()} - ${endDate
@@ -258,7 +275,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
         {isOpen && (
           <div {...overlayProps} ref={overlayRef} className={overlayClasses}>
             <DismissButton onDismiss={() => setIsOpen(false)} />
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 min-w-0">
               <CalendarGrid
                 currentMonth={currentMonth}
                 startDate={startDate}
@@ -270,15 +287,13 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
                 title="Start Date"
               />
               <CalendarGrid
-                currentMonth={currentMonth.add({ months: 1 })}
+                currentMonth={secondMonth}
                 startDate={startDate}
                 endDate={endDate}
                 onDateSelect={handleDateSelect}
-                onPreviousMonth={handleNextMonth}
-                onNextMonth={() =>
-                  setCurrentMonth(currentMonth.add({ months: 2 }))
-                }
-                onMonthChange={setCurrentMonth}
+                onPreviousMonth={handleSecondPreviousMonth}
+                onNextMonth={handleSecondNextMonth}
+                onMonthChange={setSecondMonth}
                 title="End Date"
               />
             </div>
@@ -409,7 +424,7 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   };
 
   return (
-    <div className="w-64">
+    <div className="w-full sm:w-64 sm:min-w-0">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <button

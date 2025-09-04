@@ -81,7 +81,7 @@ function App() {
               icon={isMobileSidebarOpen ? X : Menu}
               aria-label="Toggle menu"
               onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-              className="bg-black/80 border border-orange-300/30"
+              className="bg-black border border-orange-300/30"
             />
           </div>
 
