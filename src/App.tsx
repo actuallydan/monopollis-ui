@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -46,64 +46,95 @@ import TransferListShowcase from "./showcase/TransferListShowcase";
 import TreeViewShowcase from "./showcase/TreeViewShowcase";
 import TerminalMenuShowcase from "./showcase/TerminalMenuShowcase";
 import type { FileWithPreview } from "./components/FilePicker";
-import { Settings, User } from "lucide-react";
+import { Settings, Menu, X } from "lucide-react";
 
 const Link = ({
   href,
   children,
+  onClick,
 }: {
   href: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }) => {
   return (
-    <InnerLink as={RouterLink} to={href}>
+    <InnerLink as={RouterLink} to={href} onClick={onClick}>
       {children}
     </InnerLink>
   );
 };
 
 function App() {
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  const closeMobileSidebar = () => {
+    setIsMobileSidebarOpen(false);
+  };
+
   return (
     <Router basename="/monopollis-ui">
       <div className="min-h-screen bg-black text-orange-300">
         <div className="flex h-screen">
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden fixed top-4 left-4 z-50">
+            <IconButton
+              icon={isMobileSidebarOpen ? X : Menu}
+              aria-label="Toggle menu"
+              onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+              className="bg-black/80 border border-orange-300/30"
+            />
+          </div>
+
+          {/* Mobile Overlay */}
+          {isMobileSidebarOpen && (
+            <div
+              className="lg:hidden fixed inset-0 bg-black/50 z-40"
+              onClick={closeMobileSidebar}
+            />
+          )}
+
           {/* Left Sidebar */}
-          <div className="w-80 bg-black border-r border-orange-300/30 p-4 overflow-hidden">
+          <div className={`
+            w-80 bg-black border-r border-orange-300/30 p-4 overflow-hidden
+            lg:relative lg:translate-x-0 lg:z-auto
+            fixed top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out
+            ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          `}>
             <div className="mb-6 cursor-pointer">
-              <RouterLink to={"/"}>
+              <RouterLink to={"/"} onClick={closeMobileSidebar}>
                 <Badge>Monopollis UI</Badge>
               </RouterLink>
             </div>
 
             {/* Sidebar content will go here */}
             <div className="space-y-2 flex flex-col gap-2 overflow-y-auto h-full pb-20">
-              <Link href={"/components/AudioPlayer"}>Audio Player</Link>
-              <Link href={"/components/Badge"}>Badge</Link>
-              <Link href={"/components/Breadcrumb"}>Breadcrumb</Link>
-              <Link href={"/components/Button"}>Button</Link>
-              <Link href={"/components/ChatInput"}>Chat Input</Link>
-              <Link href={"/components/Clipboard"}>Clipboard</Link>
-              <Link href={"/components/DatePicker"}>Date Picker</Link>
-              <Link href={"/components/DateRangePicker"}>
+              <Link href={"/components/AudioPlayer"} onClick={closeMobileSidebar}>Audio Player</Link>
+              <Link href={"/components/Badge"} onClick={closeMobileSidebar}>Badge</Link>
+              <Link href={"/components/Breadcrumb"} onClick={closeMobileSidebar}>Breadcrumb</Link>
+              <Link href={"/components/Button"} onClick={closeMobileSidebar}>Button</Link>
+              <Link href={"/components/ChatInput"} onClick={closeMobileSidebar}>Chat Input</Link>
+              <Link href={"/components/Clipboard"} onClick={closeMobileSidebar}>Clipboard</Link>
+              <Link href={"/components/DatePicker"} onClick={closeMobileSidebar}>Date Picker</Link>
+              <Link href={"/components/DateRangePicker"} onClick={closeMobileSidebar}>
                 Date Range Picker
               </Link>
-              <Link href={"/components/FilePicker"}>File Picker</Link>
-              <Link href={"/components/FormControls"}>Form Controls</Link>
-              <Link href={"/components/InputOtp"}>Input OTP</Link>
-              <Link href={"/components/LoadingSpinner"}>Loading Spinner</Link>
-              <Link href={"/components/Select"}>Select</Link>
-              <Link href={"/components/Table"}>Table</Link>
-              <Link href={"/components/Terminal"}>Terminal Menu</Link>
-              <Link href={"/components/Textarea"}>Textarea</Link>
-              <Link href={"/components/TextInput"}>Text Input</Link>
-              <Link href={"/components/Timeline"}>Timeline</Link>
-              <Link href={"/components/TransferList"}>Transfer List</Link>
-              <Link href={"/components/TreeView"}>Tree View</Link>
+              <Link href={"/components/FilePicker"} onClick={closeMobileSidebar}>File Picker</Link>
+              <Link href={"/components/FormControls"} onClick={closeMobileSidebar}>Form Controls</Link>
+              <Link href={"/components/InputOtp"} onClick={closeMobileSidebar}>Input OTP</Link>
+              <Link href={"/components/LoadingSpinner"} onClick={closeMobileSidebar}>Loading Spinner</Link>
+              <Link href={"/components/Select"} onClick={closeMobileSidebar}>Select</Link>
+              <Link href={"/components/Table"} onClick={closeMobileSidebar}>Table</Link>
+              <Link href={"/components/Terminal"} onClick={closeMobileSidebar}>Terminal Menu</Link>
+              <Link href={"/components/Textarea"} onClick={closeMobileSidebar}>Textarea</Link>
+              <Link href={"/components/TextInput"} onClick={closeMobileSidebar}>Text Input</Link>
+              <Link href={"/components/Timeline"} onClick={closeMobileSidebar}>Timeline</Link>
+              <Link href={"/components/TransferList"} onClick={closeMobileSidebar}>Transfer List</Link>
+              <Link href={"/components/TreeView"} onClick={closeMobileSidebar}>Tree View</Link>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-8">
+          <div className="flex-1 overflow-y-auto lg:ml-0">
+            <div className="p-4 lg:p-8 pt-16 lg:pt-8">
               <Routes>
                 <Route
                   path="/"
