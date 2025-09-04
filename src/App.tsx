@@ -206,15 +206,17 @@ function App() {
                                 ]}
                                 placeholder="Choose an option"
                               />
-                              <div className="flex items-center gap-4">
+                              <div className="flex flex-col items-start gap-4">
                                 <Checkbox
+                                  label="Confirm privacy policy"
+                                  onChange={() => {}}
+                                />
+                                 <Checkbox
                                   label="Accept terms"
-                                  checked={false}
                                   onChange={() => {}}
                                 />
                                 <Switch
                                   label="Enable notifications"
-                                  checked={false}
                                   onChange={() => {}}
                                 />
                               </div>

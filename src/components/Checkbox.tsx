@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 /**
  * Props for the Checkbox component.
@@ -7,10 +7,10 @@ import React from "react";
 interface CheckboxProps {
   /** The text label displayed next to the checkbox */
   label: string;
-  /** Whether the checkbox is currently checked */
-  checked: boolean;
-  /** Function called when the checkbox state changes, receives the new checked state */
-  onChange: (checked: boolean) => void;
+  /** Whether the checkbox is currently checked (optional - if not provided, component manages its own state) */
+  checked?: boolean;
+  /** Function called when the checkbox state changes, receives the new checked state (optional if checked is not provided) */
+  onChange?: (checked: boolean) => void;
   /** Whether the checkbox is disabled and cannot be interacted with */
   disabled?: boolean;
   /** Additional CSS classes to apply to the checkbox container */
@@ -37,8 +37,8 @@ interface CheckboxProps {
  * @component
  * @param {CheckboxProps} props - The props for the Checkbox component
  * @param {string} props.label - The text label displayed next to the checkbox
- * @param {boolean} props.checked - Whether the checkbox is currently checked
- * @param {(checked: boolean) => void} props.onChange - Function called when checkbox state changes
+ * @param {boolean} [props.checked] - Whether the checkbox is currently checked (optional - component manages state if not provided)
+ * @param {(checked: boolean) => void} [props.onChange] - Function called when checkbox state changes (optional if checked is not provided)
  * @param {boolean} [props.disabled=false] - Whether the checkbox is disabled
  * @param {string} [props.className] - Additional CSS classes to apply to the container
  * @param {string} [props.id] - Unique identifier for the checkbox input
@@ -46,11 +46,17 @@ interface CheckboxProps {
  *
  * @example
  * ```tsx
- * // Basic usage
+ * // Basic usage with controlled state
  * <Checkbox
  *   label="Accept terms and conditions"
  *   checked={accepted}
  *   onChange={setAccepted}
+ * />
+ *
+ * // Uncontrolled usage (component manages its own state)
+ * <Checkbox
+ *   label="Subscribe to newsletter"
+ *   description="Receive updates about new features and announcements"
  * />
  *
  * // With description and custom styling
@@ -91,11 +97,15 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   id,
   description,
 }) => {
+  const [internalChecked, setInternalChecked] = useState(false);
+  const isControlled = checked !== undefined;
+  const currentChecked = isControlled ? checked : internalChecked;
+  
   const inputId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
   const descriptionId = description ? `${inputId}-description` : undefined;
 
   const baseClasses = `
-    relative flex items-start
+    relative flex flex-col items-start
   `;
 
   const checkboxClasses = `
@@ -115,24 +125,31 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   `;
 
   const descriptionClasses = `
-    mt-1 text-xs font-sans text-orange-300/80 ml-7
+    mt-1 text-xs font-sans text-orange-300/80
   `;
 
   return (
     <div className={`${baseClasses} ${className}`}>
+      <div className="flex items-center gap-2">
       <input
         id={inputId}
         type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
+        checked={currentChecked}
+        onChange={(e) => {
+          if (isControlled && onChange) {
+            onChange(e.target.checked);
+          } else {
+            setInternalChecked(e.target.checked);
+          }
+        }}
         disabled={disabled}
         aria-describedby={descriptionId}
         className={checkboxClasses}
       />
-
       <label htmlFor={inputId} className={labelClasses}>
         {label}
       </label>
+      </div>
 
       {description && (
         <p id={descriptionId} className={descriptionClasses}>
