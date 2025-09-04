@@ -175,7 +175,7 @@ const TreeNodeComponent = React.memo<TreeNodeProps>(
         ? "opacity-100 bg-orange-300 text-black border border-black hover:bg-black hover:text-orange-300 hover:border-orange-300"
         : isActionFocusedState
         ? "opacity-100 bg-orange-300 text-black border border-orange-300"
-        : "opacity-0 hover:opacity-100 focus:opacity-100 bg-orange-300/10 border border-orange-300/20 text-orange-300 hover:bg-orange-300 hover:text-black hover:border-orange-300 focus:bg-orange-300 focus:text-black focus:border-black"
+        : "opacity-0 group-hover:opacity-100 focus:opacity-100 bg-orange-300/10 border border-orange-300/20 text-orange-300 hover:bg-orange-300 hover:text-black hover:border-orange-300 focus:bg-orange-300 focus:text-black focus:border-black"
     }
   `;
 

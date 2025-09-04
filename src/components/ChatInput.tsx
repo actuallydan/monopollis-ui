@@ -53,7 +53,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight);
       textareaRef.current.style.height = `${newHeight}px`;
     }
-  }, [message]);
+  }, [message, attachments]);
 
   // Handle paste events for clipboard images/files
   const handlePaste = useCallback((e: React.ClipboardEvent) => {
@@ -275,7 +275,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
 
       {/* Input Area */}
       <div className="p-3">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-start">
           {/* Attachment picker button */}
           <Button
             onClick={() => fileInputRef.current?.click()}
@@ -302,6 +302,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onDrop={handleDrop}
               className="w-full px-4 py-2 rounded-md resize-none font-sans text-base bg-black text-orange-300 placeholder-orange-300/50 focus:outline-none focus:ring-4 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               rows={1}
+              style={{ minHeight: '2.5rem' }}
               aria-label="Message input"
             />
           </div>
